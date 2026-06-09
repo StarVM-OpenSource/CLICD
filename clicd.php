@@ -705,6 +705,9 @@ function clicd_info_ajax($params)
     $name = $c['name'] ?? clicd_container_name($params);
 
     $usageCall = clicd_request_debug($params, '/api/v1/containers/' . rawurlencode($name) . '/usage', [], 'GET', 30);
+    if (!clicd_success($usageCall['response']) && !empty($c['uuid'])) {
+        $usageCall = clicd_request_debug($params, '/api/containers/' . rawurlencode((string)$c['uuid']) . '/usage', [], 'GET', 30);
+    }
     $trafficCall = clicd_request_debug($params, '/api/v1/containers/' . rawurlencode($name) . '/traffic', [], 'GET', 30);
     $debug[] = $usageCall['debug'];
     $debug[] = $trafficCall['debug'];

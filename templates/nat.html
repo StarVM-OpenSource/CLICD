@@ -20,6 +20,11 @@
 .clicd-nat-message{border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:6px;padding:10px 12px;margin-bottom:12px;display:none}
 .clicd-nat-message.error{border-color:#fecaca;background:#fef2f2;color:#b91c1c}
 .clicd-nat-debug{margin-top:12px;border:1px dashed #d1d5db;border-radius:6px;background:#f9fafb;padding:10px;color:#374151;white-space:pre-wrap;font-size:12px;display:none}
+.clicd-nat-modal-mask{position:fixed;inset:0;background:rgba(15,23,42,.42);display:none;align-items:center;justify-content:center;z-index:9999;padding:16px}
+.clicd-nat-modal{width:min(420px,100%);background:#fff;border-radius:6px;border:1px solid #e5e7eb;box-shadow:0 18px 48px rgba(15,23,42,.22);padding:16px}
+.clicd-nat-modal-title{font-size:16px;font-weight:700;color:#111827;margin-bottom:8px}
+.clicd-nat-modal-body{font-size:14px;color:#4b5563;line-height:1.6;margin-bottom:14px}
+.clicd-nat-modal-actions{display:flex;justify-content:flex-end;gap:8px}
 </style>
 
 <div class="clicd-nat-panel" id="clicd-nat-panel" data-service-id="{$service_id}" data-area-key="{$area_key}">
@@ -27,86 +32,86 @@
 
     <div class="clicd-nat-grid">
         <div class="clicd-nat-card">
-            <div class="clicd-nat-label">实例名称</div>
+            <div class="clicd-nat-label">&#23454;&#20363;&#21517;&#31216;</div>
             <div class="clicd-nat-value">{$container_name}</div>
         </div>
         <div class="clicd-nat-card">
-            <div class="clicd-nat-label">公网地址</div>
+            <div class="clicd-nat-label">&#20844;&#32593;&#22320;&#22336;</div>
             <div class="clicd-nat-value">{$nat_host}</div>
         </div>
         <div class="clicd-nat-card">
-            <div class="clicd-nat-label">SSH 端口</div>
+            <div class="clicd-nat-label">SSH &#31471;&#21475;</div>
             <div class="clicd-nat-value">{$ssh_port}</div>
         </div>
     </div>
 
-    <div class="clicd-nat-title">添加端口映射</div>
+    <div class="clicd-nat-title">&#28155;&#21152;&#31471;&#21475;&#26144;&#23556;</div>
     <div class="clicd-nat-form">
         <div class="clicd-nat-row">
             <div class="clicd-nat-field">
-                <label>公网端口</label>
-                <input class="clicd-nat-input" id="clicd-add-host-port" type="number" min="1" max="65535" placeholder="例如 61320">
+                <label>&#20844;&#32593;&#31471;&#21475;</label>
+                <input class="clicd-nat-input" id="clicd-add-host-port" type="number" min="1" max="65535" placeholder="61320">
             </div>
             <div class="clicd-nat-field">
-                <label>容器端口</label>
-                <input class="clicd-nat-input" id="clicd-add-container-port" type="number" min="1" max="65535" placeholder="例如 8080">
+                <label>&#23481;&#22120;&#31471;&#21475;</label>
+                <input class="clicd-nat-input" id="clicd-add-container-port" type="number" min="1" max="65535" placeholder="8080">
             </div>
             <div class="clicd-nat-field">
-                <label>协议</label>
+                <label>&#21327;&#35758;</label>
                 <select class="clicd-nat-select" id="clicd-add-protocol">
                     <option value="tcp">TCP</option>
                     <option value="udp">UDP</option>
                 </select>
             </div>
             <div class="clicd-nat-field">
-                <label>说明</label>
-                <input class="clicd-nat-input" id="clicd-add-description" type="text" placeholder="例如 HTTP">
+                <label>&#35828;&#26126;</label>
+                <input class="clicd-nat-input" id="clicd-add-description" type="text" placeholder="HTTP">
             </div>
             <div class="clicd-nat-actions">
-                <button class="clicd-nat-btn" type="button" data-clicd-action="add">添加</button>
-                <button class="clicd-nat-btn clicd-nat-btn-secondary" type="button" data-clicd-action="random-port">获取随机端口</button>
+                <button class="clicd-nat-btn" type="button" data-clicd-action="add">&#28155;&#21152;</button>
+                <button class="clicd-nat-btn clicd-nat-btn-secondary" type="button" data-clicd-action="random-port">&#33719;&#21462;&#38543;&#26426;&#31471;&#21475;</button>
             </div>
         </div>
     </div>
 
-    <div class="clicd-nat-title">现有端口映射</div>
+    <div class="clicd-nat-title">&#29616;&#26377;&#31471;&#21475;&#26144;&#23556;</div>
     <div id="clicd-nat-list" class="clicd-nat-list">
         {if condition="empty($port_mappings)"}
-        <div class="clicd-nat-form clicd-nat-muted">暂无端口映射</div>
+        <div class="clicd-nat-form clicd-nat-muted">&#26242;&#26080;&#31471;&#21475;&#26144;&#23556;</div>
         {else/}
         {foreach name="port_mappings" item="mapping"}
         <div class="clicd-nat-item" data-index="{$mapping.index}">
             <div class="clicd-nat-row">
                 <div class="clicd-nat-field">
-                    <label>索引</label>
+                    <label>&#32034;&#24341;</label>
                     <div class="clicd-nat-value">{$mapping.index}</div>
                 </div>
                 <div class="clicd-nat-field">
-                    <label>公网访问</label>
+                    <label>&#20844;&#32593;&#35775;&#38382;</label>
                     <div class="clicd-nat-value">{$nat_host}:{$mapping.host_port}</div>
                 </div>
                 <div class="clicd-nat-field">
-                    <label>公网端口</label>
+                    <label>&#20844;&#32593;&#31471;&#21475;</label>
                     <input class="clicd-nat-input" data-field="host_port" type="number" min="1" max="65535" value="{$mapping.host_port}">
                 </div>
                 <div class="clicd-nat-field">
-                    <label>容器端口</label>
+                    <label>&#23481;&#22120;&#31471;&#21475;</label>
                     <input class="clicd-nat-input" data-field="container_port" type="number" min="1" max="65535" value="{$mapping.container_port}">
                 </div>
                 <div class="clicd-nat-field">
-                    <label>协议</label>
+                    <label>&#21327;&#35758;</label>
                     <select class="clicd-nat-select" data-field="protocol">
                         <option value="tcp" {$mapping.tcp_selected}>TCP</option>
                         <option value="udp" {$mapping.udp_selected}>UDP</option>
                     </select>
                 </div>
                 <div class="clicd-nat-field">
-                    <label>说明</label>
+                    <label>&#35828;&#26126;</label>
                     <input class="clicd-nat-input" data-field="description" type="text" value="{$mapping.description}">
                 </div>
                 <div class="clicd-nat-actions">
-                    <button class="clicd-nat-btn clicd-nat-btn-secondary" type="button" data-clicd-action="update">保存</button>
-                    <button class="clicd-nat-btn clicd-nat-btn-danger" type="button" data-clicd-action="delete">删除</button>
+                    <button class="clicd-nat-btn clicd-nat-btn-secondary" type="button" data-clicd-action="update">&#20445;&#23384;</button>
+                    <button class="clicd-nat-btn clicd-nat-btn-danger" type="button" data-clicd-action="delete">&#21024;&#38500;</button>
                 </div>
             </div>
         </div>
@@ -115,6 +120,16 @@
     </div>
 
     <pre class="clicd-nat-debug" id="clicd-nat-debug"></pre>
+    <div class="clicd-nat-modal-mask" id="clicd-nat-delete-modal">
+        <div class="clicd-nat-modal">
+            <div class="clicd-nat-modal-title">&#30830;&#35748;&#21024;&#38500;</div>
+            <div class="clicd-nat-modal-body" id="clicd-nat-delete-text">&#30830;&#35748;&#21024;&#38500;&#35813;&#31471;&#21475;&#26144;&#23556;&#65311;</div>
+            <div class="clicd-nat-modal-actions">
+                <button class="clicd-nat-btn clicd-nat-btn-secondary" type="button" id="clicd-nat-delete-cancel">&#21462;&#28040;</button>
+                <button class="clicd-nat-btn clicd-nat-btn-danger" type="button" id="clicd-nat-delete-confirm">&#21024;&#38500;</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -127,6 +142,11 @@
     var debugBox = document.getElementById('clicd-nat-debug');
     var list = document.getElementById('clicd-nat-list');
     var natHost = '{$nat_host}';
+    var deleteModal = document.getElementById('clicd-nat-delete-modal');
+    var deleteText = document.getElementById('clicd-nat-delete-text');
+    var deleteCancel = document.getElementById('clicd-nat-delete-cancel');
+    var deleteConfirm = document.getElementById('clicd-nat-delete-confirm');
+    var pendingDeletePayload = null;
 
     function showMessage(type, text) {
         message.className = 'clicd-nat-message' + (type === 'error' ? ' error' : '');
@@ -153,7 +173,7 @@
 
     function renderList(items) {
         if (!Array.isArray(items) || items.length === 0) {
-            list.innerHTML = '<div class="clicd-nat-form clicd-nat-muted">暂无端口映射</div>';
+            list.innerHTML = '<div class="clicd-nat-form clicd-nat-muted">&#26242;&#26080;&#31471;&#21475;&#26144;&#23556;</div>';
             return;
         }
         list.innerHTML = items.map(function(item) {
@@ -164,17 +184,17 @@
             var containerPort = escapeHtml(String(item.container_port || ''));
             return '<div class="clicd-nat-item" data-index="' + index + '">' +
                 '<div class="clicd-nat-row">' +
-                '<div class="clicd-nat-field"><label>索引</label><div class="clicd-nat-value">' + index + '</div></div>' +
-                '<div class="clicd-nat-field"><label>公网访问</label><div class="clicd-nat-value">' + escapeHtml(natHost) + ':' + hostPort + '</div></div>' +
-                '<div class="clicd-nat-field"><label>公网端口</label><input class="clicd-nat-input" data-field="host_port" type="number" min="1" max="65535" value="' + hostPort + '"></div>' +
-                '<div class="clicd-nat-field"><label>容器端口</label><input class="clicd-nat-input" data-field="container_port" type="number" min="1" max="65535" value="' + containerPort + '"></div>' +
-                '<div class="clicd-nat-field"><label>协议</label><select class="clicd-nat-select" data-field="protocol">' +
+                '<div class="clicd-nat-field"><label>&#32034;&#24341;</label><div class="clicd-nat-value">' + index + '</div></div>' +
+                '<div class="clicd-nat-field"><label>&#20844;&#32593;&#35775;&#38382;</label><div class="clicd-nat-value">' + escapeHtml(natHost) + ':' + hostPort + '</div></div>' +
+                '<div class="clicd-nat-field"><label>&#20844;&#32593;&#31471;&#21475;</label><input class="clicd-nat-input" data-field="host_port" type="number" min="1" max="65535" value="' + hostPort + '"></div>' +
+                '<div class="clicd-nat-field"><label>&#23481;&#22120;&#31471;&#21475;</label><input class="clicd-nat-input" data-field="container_port" type="number" min="1" max="65535" value="' + containerPort + '"></div>' +
+                '<div class="clicd-nat-field"><label>&#21327;&#35758;</label><select class="clicd-nat-select" data-field="protocol">' +
                 '<option value="tcp"' + (protocol === 'tcp' ? ' selected' : '') + '>TCP</option>' +
                 '<option value="udp"' + (protocol === 'udp' ? ' selected' : '') + '>UDP</option>' +
                 '</select></div>' +
-                '<div class="clicd-nat-field"><label>说明</label><input class="clicd-nat-input" data-field="description" type="text" value="' + desc + '"></div>' +
-                '<div class="clicd-nat-actions"><button class="clicd-nat-btn clicd-nat-btn-secondary" type="button" data-clicd-action="update">保存</button>' +
-                '<button class="clicd-nat-btn clicd-nat-btn-danger" type="button" data-clicd-action="delete">删除</button></div>' +
+                '<div class="clicd-nat-field"><label>&#35828;&#26126;</label><input class="clicd-nat-input" data-field="description" type="text" value="' + desc + '"></div>' +
+                '<div class="clicd-nat-actions"><button class="clicd-nat-btn clicd-nat-btn-secondary" type="button" data-clicd-action="update">&#20445;&#23384;</button>' +
+                '<button class="clicd-nat-btn clicd-nat-btn-danger" type="button" data-clicd-action="delete">&#21024;&#38500;</button></div>' +
                 '</div></div>';
         }).join('');
     }
@@ -213,11 +233,11 @@
             });
             var text = await res.text();
             var data;
-            try { data = JSON.parse(text); } catch (e) { data = {status:'error', msg:'非 JSON 响应: ' + text}; }
+            try { data = JSON.parse(text); } catch (e) { data = {status:'error', msg:'\u975e JSON \u54cd\u5e94: ' + text}; }
             showDebug((data.data && data.data.debug) || data.debug || data);
             if (data.status === 200 || data.status === 'success') {
                 if (!silent) {
-                    showMessage('success', data.msg || '操作成功');
+                    showMessage('success', data.msg || '\u64cd\u4f5c\u6210\u529f');
                 }
                 if (data.data && data.data.port) {
                     document.getElementById('clicd-add-host-port').value = data.data.port;
@@ -228,13 +248,30 @@
                     request('list', {}, true);
                 }
             } else {
-                showMessage('error', data.msg || '操作失败');
+                showMessage('error', data.msg || '\u64cd\u4f5c\u5931\u8d25');
             }
         } catch (e) {
-            showMessage('error', e.message || '请求失败');
+            showMessage('error', e.message || '\u8bf7\u6c42\u5931\u8d25');
             showDebug({error: String(e)});
         } finally {
             setBusy(false);
+        }
+    }
+
+    function openDeleteModal(payload) {
+        pendingDeletePayload = payload;
+        if (deleteText) {
+            deleteText.textContent = '\u786e\u8ba4\u5220\u9664\u7aef\u53e3\u6620\u5c04 ' + natHost + ':' + (payload.host_port || '-') + ' -> ' + (payload.container_port || '-') + '/' + (payload.protocol || 'tcp') + ' \u5417\uff1f';
+        }
+        if (deleteModal) {
+            deleteModal.style.display = 'flex';
+        }
+    }
+
+    function closeDeleteModal() {
+        pendingDeletePayload = null;
+        if (deleteModal) {
+            deleteModal.style.display = 'none';
         }
     }
 
@@ -257,15 +294,35 @@
         }
         var item = button.closest('.clicd-nat-item');
         if (!item) return;
-        var index = item.getAttribute('data-index');
-        if (action === 'delete' && !confirm('确认删除该端口映射？')) return;
-        request(action, {
-            index: index,
+        var payload = {
+            index: item.getAttribute('data-index'),
             host_port: field(item, 'host_port') ? field(item, 'host_port').value : '',
             container_port: field(item, 'container_port') ? field(item, 'container_port').value : '',
             protocol: field(item, 'protocol') ? field(item, 'protocol').value : 'tcp',
             description: field(item, 'description') ? field(item, 'description').value : ''
-        });
+        };
+        if (action === 'delete') {
+            openDeleteModal(payload);
+            return;
+        }
+        request(action, payload);
     });
+
+    if (deleteCancel) {
+        deleteCancel.addEventListener('click', closeDeleteModal);
+    }
+    if (deleteModal) {
+        deleteModal.addEventListener('click', function(event){
+            if (event.target === deleteModal) closeDeleteModal();
+        });
+    }
+    if (deleteConfirm) {
+        deleteConfirm.addEventListener('click', function(){
+            if (!pendingDeletePayload) return;
+            var payload = pendingDeletePayload;
+            closeDeleteModal();
+            request('delete', payload);
+        });
+    }
 })();
 </script>
