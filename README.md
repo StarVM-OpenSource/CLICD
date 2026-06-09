@@ -27,23 +27,22 @@ public/plugins/servers/clicd/
 CLICD 面板地址建议直接填写 HTTPS 地址：
 
 ```text
-server_host = https://panel.example.com:8999
+主机名 = https://0.0.0.0:8999
 ```
 
 也可以拆分填写：
 
 ```text
-server_ip = panel.example.com
-port      = 8999
-secure    = 1
+IP地址 = 0.0.0.0
+端口      = 8999
+secure    = 开启
 ```
 
 API Key 可以填写在以下任意一个字段中：
 
 ```text
-accesshash
-server_password
-password
+Hash
+密码
 ```
 
 模块请求 CLICD 时会同时携带：
@@ -186,7 +185,7 @@ POST /api/v1/ssh-ticket
 浏览器会从该页面直连 CLICD：
 
 ```text
-wss://panel.example.com/api/ssh?container=example-vm
+wss://0.0.0.0:8999/api/ssh?container=example-vm
 Sec-WebSocket-Protocol: clicd-ticket.xxxxx
 ```
 
@@ -237,21 +236,21 @@ ssh-ticket:create
 
 ```bash
 curl -H "X-API-Key: clicd_sk_xxxx" \
-  https://panel.example.com:8999/api/v1/dashboard
+  https://0.0.0.0:8999/api/v1/dashboard
 ```
 
 容器详情：
 
 ```bash
 curl -H "X-API-Key: clicd_sk_xxxx" \
-  https://panel.example.com:8999/api/v1/containers/example-vm
+  https://0.0.0.0:8999/api/v1/containers/example-vm
 ```
 
 修改 NAT：
 
 ```bash
 curl --location --request PUT \
-  "https://panel.example.com:8999/api/v1/containers/10/port-mappings/1" \
+  "https://0.0.0.0:8999/api/v1/containers/10/port-mappings/1" \
   --header "X-API-Key: clicd_sk_xxxx" \
   --header "Authorization: Bearer clicd_sk_xxxx" \
   --header "Content-Type: application/json" \
@@ -262,7 +261,7 @@ curl --location --request PUT \
 
 ```bash
 curl --location --request POST \
-  "https://panel.example.com:8999/api/v1/ssh-ticket" \
+  "https://0.0.0.0:8999/api/v1/ssh-ticket" \
   --header "X-API-Key: clicd_sk_xxxx" \
   --header "Content-Type: application/json" \
   --data-raw '{"container_name":"example-vm"}'
@@ -283,7 +282,7 @@ Content-Type: application/json
 请确认 CLICD 面板已经启用 HTTPS/WSS，并且魔方服务器配置使用 HTTPS：
 
 ```text
-server_host = https://panel.example.com:8999
+主机名 = https://0.0.0.0:8999
 ```
 
 如果仍然使用 `http://`，模块会生成 `ws://` 地址，HTTPS 客户区页面会被浏览器拦截。
