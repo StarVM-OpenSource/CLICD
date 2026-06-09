@@ -228,7 +228,13 @@ Sec-WebSocket-Protocol: clicd-ticket.xxxxx
 
 注意：WebSSH 受浏览器安全策略和 CLICD 后端 Origin 校验影响。魔方客户区通常是 HTTPS，因此 CLICD 面板也必须启用 HTTPS/WSS。请把魔方服务器配置里的 `主机名` 改为 `https://0.0.0.0:8999`，或把 `secure` 设为 `开启`。
 
-如果 WebSSH 页面显示 `WebSocket error`、`Disconnected code=1006`，但直接以 CLICD 自身 Origin 测试能返回 `101 Switching Protocols`，通常说明 CLICD 后端未放行魔方客户区域名的 WebSocket Origin。此时需要在 CLICD 后端放行魔方域名，或由 CLICD 官方提供同源 WebSSH 页面入口；前端页面无法伪造浏览器 Origin。
+新版 CLICD 已支持 WebSSH Origin 放行。部署时需要在 CLICD 后端把魔方财务客户区域名加入 WebSSH Origin 白名单，例如：
+
+```text
+https://www.example.com
+```
+
+如果 WebSSH 页面显示 `WebSocket error`、`Disconnected code=1006`，但直接以 CLICD 自身 Origin 测试能返回 `101 Switching Protocols`，通常说明 CLICD 后端未放行魔方客户区域名的 WebSocket Origin。此时请检查 CLICD 的 WebSSH Origin 白名单配置；前端页面无法伪造浏览器 Origin。
 
 ## 支持的魔方操作
 
@@ -348,7 +354,13 @@ server_host = https://0.0.0.0:8999
 
 如果仍然使用 `http://`，模块会生成 `ws://` 地址，HTTPS 客户区页面会被浏览器拦截。
 
-如果 WSS 证书正常但仍返回 `Forbidden` 或浏览器显示 `code=1006`，请检查 CLICD 是否限制 WebSocket Origin。需要 CLICD 后端放行魔方客户区域名，或者提供同源 WebSSH 页面。
+如果 WSS 证书正常但仍返回 `Forbidden` 或浏览器显示 `code=1006`，请检查 CLICD 的 WebSSH Origin 白名单。新版 CLICD 已支持放行魔方财务域名，需要把魔方客户区访问域名完整加入白名单，例如：
+
+```text
+https://www.example.com
+```
+
+注意需要填写浏览器实际访问魔方客户区时的协议和域名，`http` / `https`、带不带 `www` 都要与实际访问地址一致。
 
 ### 开通后魔方里的 IP、端口、密码不对
 
