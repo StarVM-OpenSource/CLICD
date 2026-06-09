@@ -1,6 +1,6 @@
 # CLICD 魔方财务对接模块
 
-这是用于智简魔方/IDCSMART 的 CLICD 服务器模块。模块通过 CLICD API 完成实例开通、删除、开关机、重装、改密、资源变更、流量重置、NAT 端口映射管理和 WebSSH。
+这是用于智简魔方 / IDCSMART 的 CLICD 服务器模块。模块通过 CLICD API 完成实例开通、删除、开关机、重启、重装、改密、资源变更、流量重置、NAT 端口映射管理、实例信息展示和 WebSSH 入口。
 
 ## 文件结构
 
@@ -24,7 +24,7 @@ public/plugins/servers/clicd/
 
 在魔方后台添加服务器时，模块名称选择 `clicd`。
 
-CLICD 面板地址建议直接填写 HTTPS 地址：
+CLICD 面板地址建议使用 HTTPS：
 
 ```text
 主机名 = https://0.0.0.0:8999
@@ -58,13 +58,13 @@ Content-Type: application/json
 | 字段 | 说明 |
 | --- | --- |
 | `virtualization` | 虚拟化类型，`lxc` 或 `kvm` |
-| `template_id` | CLICD 模板/镜像 ID |
+| `template_id` | CLICD 模板 / 镜像 ID |
 | `vcpu` | CPU 核心数 |
 | `cpu_percent` | CPU 使用率限制，`0` 表示不额外限制 |
 | `ram_mb` | 内存，单位 MB |
 | `disk_gb` | 系统盘，单位 GB |
 | `network_bw_mbps` | 带宽，单位 Mbps |
-| `traffic_mode` | `total` 总流量，或 `in_out` 入/出分开 |
+| `traffic_mode` | `total` 总流量，或 `in_out` 入 / 出分开 |
 | `monthly_traffic_gb` | 月流量 GB |
 | `traffic_in_gb` | 入站流量 GB，`in_out` 模式使用 |
 | `traffic_out_gb` | 出站流量 GB，`in_out` 模式使用 |
@@ -106,30 +106,65 @@ NAT转发
 WebSSH
 ```
 
-### 实例信息
+## 实例信息
 
-实例信息页展示基础实例信息、SSH 信息、资源配置、到期时间、流量统计和资源图表。
+实例信息页展示：
 
-图表数据通过客户区懒加载接口刷新，不会强制刷新整个魔方页面。当前展示项包括：
-
-- CPU 使用率
-- 内存使用
-- 负载
-- 磁盘使用
+- 实例名称、运行状态、SSH 地址、IPv6
+- CPU、内存、负载、磁盘圆环状态
 - 月流量进度
-- 网络流量曲线
-- 磁盘 IO 曲线
+- CPU 使用率、内存使用、网络流量、磁盘 IO 图表
+- IPv4、SSH 端口、SSH 密码、资源配置、到期时间
 
-模块会尝试调用：
+图表数据通过客户区懒加载接口获取，不会强制刷新整个魔方页面。页面首次打开会加载一次数据，之后由用户选择是否自动刷新：
+
+```text
+不刷新
+10 秒
+1 分钟
+5 分钟
+10 分钟
+```
+
+也可以点击“立即刷新”手动刷新一次。当前 CLICD 用量接口返回的是实时值，不是历史数组；图表曲线由客户区前端持续采样生成。若需要打开页面立即显示历史曲线，需要 CLICD 额外提供历史指标接口。
+
+流量显示支持智能单位，小流量会显示 B / KB / MB，大流量显示 GB，例如：
+
+```text
+370.5 KB / 100 GB
+```
+
+模块会优先调用：
 
 ```text
 GET /api/v1/containers/{name}/usage
 GET /api/v1/containers/{name}/traffic
 ```
 
-如果 CLICD 返回字段不完整，页面会显示 `-` 或 `0`，不会卡在“加载中”。
+如果 `/api/v1/containers/{name}/usage` 不可用，模块会在容器详情存在 `uuid` 时尝试兼容：
 
-### NAT 转发
+```text
+GET /api/containers/{uuid}/usage
+```
+
+已兼容的常见用量字段包括：
+
+```text
+cpu_usage_pct
+memory_usage_bytes
+disk_usage_bytes
+network_rx_bps
+network_tx_bps
+disk_read_bps
+disk_write_bps
+rx_used_bytes
+tx_used_bytes
+total_used_bytes
+limit_gb
+used_pct
+```
+
+## NAT 转发
 
 NAT 转发是独立页面，支持：
 
@@ -138,6 +173,8 @@ NAT 转发是独立页面，支持：
 - 添加端口映射
 - 修改端口映射
 - 删除端口映射
+
+删除端口映射时使用页面内确认弹窗，不使用浏览器自带确认框。
 
 使用的 CLICD API：
 
@@ -149,7 +186,7 @@ PUT    /api/v1/containers/{id}/port-mappings/{index}
 DELETE /api/v1/containers/{id}/port-mappings/{index}
 ```
 
-添加/修改 NAT 映射时必须使用 JSON 请求体，例如：
+添加 / 修改 NAT 映射时必须使用 JSON 请求体，例如：
 
 ```json
 {
@@ -160,7 +197,7 @@ DELETE /api/v1/containers/{id}/port-mappings/{index}
 }
 ```
 
-### WebSSH
+## WebSSH
 
 WebSSH 按钮会调用：
 
@@ -189,7 +226,9 @@ wss://0.0.0.0:8999/api/ssh?container=example-vm
 Sec-WebSocket-Protocol: clicd-ticket.xxxxx
 ```
 
-注意：魔方客户区通常是 HTTPS，因此 CLICD 面板也必须启用 HTTPS/WSS。请把魔方服务器配置里的 `server_host` 改为 `https://...`，或把 `secure` 设为 `1`，否则浏览器会阻止从 HTTPS 页面发起不安全的 `ws://` 连接。
+注意：WebSSH 受浏览器安全策略和 CLICD 后端 Origin 校验影响。魔方客户区通常是 HTTPS，因此 CLICD 面板也必须启用 HTTPS/WSS。请把魔方服务器配置里的 `主机名` 改为 `https://0.0.0.0:8999`，或把 `secure` 设为 `开启`。
+
+如果 WebSSH 页面显示 `WebSocket error`、`Disconnected code=1006`，但直接以 CLICD 自身 Origin 测试能返回 `101 Switching Protocols`，通常说明 CLICD 后端未放行魔方客户区域名的 WebSocket Origin。此时需要在 CLICD 后端放行魔方域名，或由 CLICD 官方提供同源 WebSSH 页面入口；前端页面无法伪造浏览器 Origin。
 
 ## 支持的魔方操作
 
@@ -246,6 +285,20 @@ curl -H "X-API-Key: clicd_sk_xxxx" \
   https://0.0.0.0:8999/api/v1/containers/example-vm
 ```
 
+资源用量：
+
+```bash
+curl -H "X-API-Key: clicd_sk_xxxx" \
+  https://0.0.0.0:8999/api/v1/containers/example-vm/usage
+```
+
+流量统计：
+
+```bash
+curl -H "X-API-Key: clicd_sk_xxxx" \
+  https://0.0.0.0:8999/api/v1/containers/example-vm/traffic
+```
+
 修改 NAT：
 
 ```bash
@@ -277,19 +330,29 @@ curl --location --request POST \
 Content-Type: application/json
 ```
 
+### 图表刚打开只有一条横线
+
+CLICD 当前用量接口返回的是实时值，不是历史序列。页面刚打开时只有一个采样点，所以会显示当前值横线。选择 `10 秒` 自动刷新或点击“立即刷新”多采样几次后，会逐步形成折线。
+
+### 流量显示为 0
+
+旧版本只显示 GB，小流量换算后会被四舍五入成 `0 GB`。当前版本已改为智能单位，会显示 B / KB / MB / GB。
+
 ### WebSSH 打不开或提示不安全 WebSocket
 
 请确认 CLICD 面板已经启用 HTTPS/WSS，并且魔方服务器配置使用 HTTPS：
 
 ```text
-主机名 = https://0.0.0.0:8999
+server_host = https://0.0.0.0:8999
 ```
 
 如果仍然使用 `http://`，模块会生成 `ws://` 地址，HTTPS 客户区页面会被浏览器拦截。
 
+如果 WSS 证书正常但仍返回 `Forbidden` 或浏览器显示 `code=1006`，请检查 CLICD 是否限制 WebSocket Origin。需要 CLICD 后端放行魔方客户区域名，或者提供同源 WebSSH 页面。
+
 ### 开通后魔方里的 IP、端口、密码不对
 
-执行“同步状态”或重装/改密后，模块会重新拉取容器详情。请确认 CLICD 容器详情接口能返回：
+执行“同步状态”或重装 / 改密后，模块会重新拉取容器详情。请确认 CLICD 容器详情接口能返回：
 
 ```text
 ssh_port
@@ -298,7 +361,3 @@ status
 ```
 
 公网 IP 优先使用 `nat_public_ip/public_ip/host_ip/external_ip/node_ip/nat_host` 等字段；如果接口没有返回，则使用魔方服务器配置的 IP。
-
-### 图表数据为空
-
-模块会尝试兼容多种字段名，例如 `cpu_percent`、`memory_used`、`rx_bytes`、`tx_bytes`、`disk_read_bps`、`disk_write_bps` 等。若后端没有返回对应字段，页面会显示默认值，不会影响基础实例信息和 NAT 页面使用。

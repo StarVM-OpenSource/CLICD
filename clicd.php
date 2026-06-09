@@ -37,7 +37,7 @@ function clicd_json_response($payload)
 function clicd_MetaData()
 {
     return [
-        'DisplayName' => 'CLICD 对接模块',
+        'DisplayName' => 'CLICD 对接模块 by 欢-Huan and ChatGPT 5.5',
         'APIVersion'  => '1.1',
         'HelpDoc'     => 'https://github.com/MengMengCode/CLICD',
         'version'     => '1.0.1',
@@ -356,6 +356,21 @@ function clicd_bytes_to_gb($bytes)
 function clicd_bytes_to_mb($bytes)
 {
     return round(clicd_number_value($bytes, 0) / 1048576, 2);
+}
+
+function clicd_format_bytes($bytes)
+{
+    $value = clicd_number_value($bytes, 0);
+    if ($value >= 1073741824) {
+        return round($value / 1073741824, 2) . ' GB';
+    }
+    if ($value >= 1048576) {
+        return round($value / 1048576, 2) . ' MB';
+    }
+    if ($value >= 1024) {
+        return round($value / 1024, 2) . ' KB';
+    }
+    return round($value, 2) . ' B';
 }
 
 function clicd_format_rate($bytesPerSecond)
@@ -786,6 +801,10 @@ function clicd_info_ajax($params)
             'traffic_limit'  => $limitGB,
             'traffic_in_gb'  => round($rxBytes / 1073741824, 2),
             'traffic_out_gb' => round($txBytes / 1073741824, 2),
+            'traffic_used_text' => clicd_format_bytes($rxBytes + $txBytes),
+            'traffic_limit_text'=> $limitGB > 0 ? round($limitGB, 2) . ' GB' : '不限',
+            'traffic_in_text'   => clicd_format_bytes($rxBytes),
+            'traffic_out_text'  => clicd_format_bytes($txBytes),
             'traffic_percent'=> $trafficPercent,
             'net_in_bps'     => round($netInBps, 2),
             'net_out_bps'    => round($netOutBps, 2),
@@ -1117,6 +1136,10 @@ function clicd_infoData($params)
                 'traffic_limit'  => '-',
                 'traffic_in_gb'  => '-',
                 'traffic_out_gb' => '-',
+                'traffic_used_text' => '-',
+                'traffic_limit_text'=> '-',
+                'traffic_in_text'   => '-',
+                'traffic_out_text'  => '-',
                 'traffic_percent'=> 0,
                 'net_in_bps'     => 0,
                 'net_out_bps'    => 0,
@@ -1308,6 +1331,10 @@ function clicd_ClientAreaOutput($params, $key)
     $initialTrafficIn = $initialRxBytes ? round($initialRxBytes / 1073741824, 2) : '-';
     $initialTrafficOut = $initialTxBytes ? round($initialTxBytes / 1073741824, 2) : '-';
     $initialTrafficLimit = isset($c['monthly_traffic_gb']) && $c['monthly_traffic_gb'] !== '' ? $c['monthly_traffic_gb'] : '-';
+    $initialTrafficUsedText = ($initialRxBytes || $initialTxBytes) ? clicd_format_bytes($initialRxBytes + $initialTxBytes) : '-';
+    $initialTrafficInText = $initialRxBytes ? clicd_format_bytes($initialRxBytes) : '-';
+    $initialTrafficOutText = $initialTxBytes ? clicd_format_bytes($initialTxBytes) : '-';
+    $initialTrafficLimitText = is_numeric($initialTrafficLimit) ? round((float)$initialTrafficLimit, 2) . ' GB' : '-';
     $options = $params['configoptions'] ?? [];
 
     return [
@@ -1329,6 +1356,10 @@ function clicd_ClientAreaOutput($params, $key)
             'traffic_limit'  => $initialTrafficLimit,
             'traffic_in_gb'  => $initialTrafficIn,
             'traffic_out_gb' => $initialTrafficOut,
+            'traffic_used_text' => $initialTrafficUsedText,
+            'traffic_limit_text'=> $initialTrafficLimitText,
+            'traffic_in_text'   => $initialTrafficInText,
+            'traffic_out_text'  => $initialTrafficOutText,
             'expires_at'     => $c['expires_at'] ?? '',
             'service_id'     => clicd_request_value('id', $params['hostid'] ?? ''),
             'area_key'       => 'info',
