@@ -1,0 +1,304 @@
+<style>
+.clicd-info{font-size:14px;color:#1f2937;background:#f6f8fb;padding:14px;border-radius:6px}
+.clicd-info *{box-sizing:border-box}
+.clicd-head{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:12px}
+.clicd-mini{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:10px}
+.clicd-mini-label{font-size:12px;color:#6b7280;margin-bottom:4px}
+.clicd-mini-value{font-size:16px;font-weight:600;color:#111827;word-break:break-all}
+.clicd-section{background:#fff;border:1px solid #e5e7eb;border-radius:6px;margin-top:12px;padding:14px}
+.clicd-section-title{display:flex;align-items:center;justify-content:space-between;font-size:15px;font-weight:700;margin-bottom:12px;color:#111827}
+.clicd-refresh{font-size:12px;color:#6b7280;font-weight:400}
+.clicd-gauges{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.clicd-gauge{display:flex;align-items:center;gap:12px;min-height:92px}
+.clicd-ring{--p:0%;width:78px;height:78px;border-radius:50%;background:conic-gradient(#2f80ed var(--p),#e5e7eb 0);display:grid;place-items:center;flex:0 0 auto;position:relative}
+.clicd-ring:before{content:"";width:58px;height:58px;border-radius:50%;background:#fff;position:absolute}
+.clicd-ring span{position:relative;font-size:18px;font-weight:700;color:#111827}
+.clicd-gauge-title{font-weight:700;color:#111827;margin-bottom:4px}
+.clicd-gauge-sub{font-size:12px;color:#6b7280;line-height:1.45}
+.clicd-progress{height:12px;background:#e5e7eb;border-radius:999px;overflow:hidden}
+.clicd-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#2f80ed,#10b981);transition:width .25s ease}
+.clicd-traffic-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin-top:8px;color:#374151}
+.clicd-charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.clicd-chart{border:1px solid #e5e7eb;border-radius:6px;padding:12px;background:#fff;min-height:190px}
+.clicd-chart-title{display:flex;justify-content:space-between;gap:8px;align-items:center;font-weight:700;margin-bottom:8px;color:#111827}
+.clicd-chart-value{font-size:12px;color:#6b7280;font-weight:400;white-space:nowrap}
+.clicd-chart canvas{width:100%;height:132px;display:block}
+.clicd-table{width:100%;border-collapse:collapse;background:#fff}
+.clicd-table th,.clicd-table td{border:1px solid #e5e7eb;padding:8px;text-align:left}
+.clicd-table th{width:16%;background:#f9fafb;color:#374151;font-weight:600}
+.clicd-debug{display:none;margin-top:10px;padding:8px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:6px;font-size:12px}
+@media (max-width:640px){
+    .clicd-info{padding:10px}
+    .clicd-table th,.clicd-table td{display:block;width:100%}
+    .clicd-ring{width:70px;height:70px}
+    .clicd-ring:before{width:52px;height:52px}
+}
+</style>
+
+<div class="clicd-info" data-clicd-info-root="1">
+    <div class="clicd-head">
+        <div class="clicd-mini">
+            <div class="clicd-mini-label">&#23454;&#20363;&#21517;&#31216;</div>
+            <div class="clicd-mini-value">{$container.name|default='-'}</div>
+        </div>
+        <div class="clicd-mini">
+            <div class="clicd-mini-label">&#36816;&#34892;&#29366;&#24577;</div>
+            <div class="clicd-mini-value">{$status_text|default='-'}</div>
+        </div>
+        <div class="clicd-mini">
+            <div class="clicd-mini-label">SSH &#22320;&#22336;</div>
+            <div class="clicd-mini-value">{$ssh_host|default='-'}:{$ssh_port|default='-'}</div>
+        </div>
+        <div class="clicd-mini">
+            <div class="clicd-mini-label">IPv6</div>
+            <div class="clicd-mini-value">{$ipv6|default='-'}</div>
+        </div>
+    </div>
+
+    <div class="clicd-section">
+        <div class="clicd-section-title">
+            <span>&#29366;&#24577;</span>
+            <span class="clicd-refresh">&#26356;&#26032;&#20110; <span data-clicd-info="chart_time">-</span></span>
+        </div>
+        <div class="clicd-gauges">
+            <div class="clicd-gauge">
+                <div class="clicd-ring" data-gauge="cpu_percent"><span><span data-clicd-info="cpu_percent">0</span>%</span></div>
+                <div>
+                    <div class="clicd-gauge-title">CPU</div>
+                    <div class="clicd-gauge-sub" data-clicd-info="cpu_detail">-</div>
+                </div>
+            </div>
+            <div class="clicd-gauge">
+                <div class="clicd-ring" data-gauge="mem_percent"><span><span data-clicd-info="mem_percent">0</span>%</span></div>
+                <div>
+                    <div class="clicd-gauge-title">&#20869;&#23384;</div>
+                    <div class="clicd-gauge-sub" data-clicd-info="mem_detail">-</div>
+                </div>
+            </div>
+            <div class="clicd-gauge">
+                <div class="clicd-ring" data-gauge="load_percent"><span><span data-clicd-info="load_percent">0</span>%</span></div>
+                <div>
+                    <div class="clicd-gauge-title">&#36127;&#36733;</div>
+                    <div class="clicd-gauge-sub" data-clicd-info="load_detail">-</div>
+                </div>
+            </div>
+            <div class="clicd-gauge">
+                <div class="clicd-ring" data-gauge="disk_percent"><span><span data-clicd-info="disk_percent">0</span>%</span></div>
+                <div>
+                    <div class="clicd-gauge-title">&#30913;&#30424;</div>
+                    <div class="clicd-gauge-sub" data-clicd-info="disk_detail">-</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top:14px">
+            <div class="clicd-traffic-row">
+                <div>&#26376;&#27969;&#37327;</div>
+                <div><span data-clicd-info="traffic_used">{$traffic_used|default='-'}</span> / <span data-clicd-info="traffic_limit">{$traffic_limit|default='-'}</span> GB</div>
+            </div>
+            <div class="clicd-progress"><span data-progress="traffic_percent"></span></div>
+            <div class="clicd-traffic-row" style="font-size:12px;color:#6b7280">
+                <div>&#20837;&#31449; <span data-clicd-info="traffic_in_gb">{$traffic_in_gb|default='-'}</span> GB</div>
+                <div>&#20986;&#31449; <span data-clicd-info="traffic_out_gb">{$traffic_out_gb|default='-'}</span> GB</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="clicd-section">
+        <div class="clicd-section-title"><span>&#32479;&#35745;&#20449;&#24687;</span></div>
+        <div class="clicd-charts">
+            <div class="clicd-chart">
+                <div class="clicd-chart-title">CPU &#20351;&#29992;&#29575; <span class="clicd-chart-value" data-clicd-info="cpu_detail">-</span></div>
+                <canvas data-chart="cpu_percent"></canvas>
+            </div>
+            <div class="clicd-chart">
+                <div class="clicd-chart-title">&#20869;&#23384;&#20351;&#29992; <span class="clicd-chart-value" data-clicd-info="mem_detail">-</span></div>
+                <canvas data-chart="mem_percent"></canvas>
+            </div>
+            <div class="clicd-chart">
+                <div class="clicd-chart-title">&#32593;&#32476;&#27969;&#37327; <span class="clicd-chart-value"><span data-clicd-info="net_in_rate">0 B/s</span> / <span data-clicd-info="net_out_rate">0 B/s</span></span></div>
+                <canvas data-chart="network"></canvas>
+            </div>
+            <div class="clicd-chart">
+                <div class="clicd-chart-title">&#30913;&#30424; IO <span class="clicd-chart-value"><span data-clicd-info="disk_read_rate">0 B/s</span> / <span data-clicd-info="disk_write_rate">0 B/s</span></span></div>
+                <canvas data-chart="diskio"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="clicd-section">
+        <div class="clicd-section-title"><span>&#23454;&#20363;&#20449;&#24687;</span></div>
+        <table class="clicd-table">
+            <tbody>
+                <tr>
+                    <th>IPv4</th><td>{$ipv4|default='-'}</td>
+                    <th>&#29992;&#25143;&#21517;</th><td>root</td>
+                </tr>
+                <tr>
+                    <th>SSH &#31471;&#21475;</th><td>{$ssh_port|default='-'}</td>
+                    <th>SSH &#23494;&#30721;</th><td>{$ssh_password|default='-'}</td>
+                </tr>
+                <tr>
+                    <th>CPU</th><td>{$vcpu|default='-'} &#26680;</td>
+                    <th>&#20869;&#23384;</th><td>{$ram_mb|default='-'} MB</td>
+                </tr>
+                <tr>
+                    <th>&#30828;&#30424;</th><td>{$disk_gb|default='-'} GB</td>
+                    <th>&#24102;&#23485;</th><td>{$bandwidth|default='-'} Mbps</td>
+                </tr>
+                <tr>
+                    <th>&#21040;&#26399;&#26102;&#38388;</th><td colspan="3">{$expires_at|default='-'}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="clicd-debug" id="clicd-info-debug"></div>
+</div>
+
+<script>
+(function(){
+    var root = document.querySelector('[data-clicd-info-root="1"]:not([data-info-bound="1"])');
+    if (!root) return;
+    root.setAttribute('data-info-bound', '1');
+
+    var history = {
+        cpu_percent: [],
+        mem_percent: [],
+        network_in: [],
+        network_out: [],
+        disk_read: [],
+        disk_write: []
+    };
+    var maxPoints = 18;
+
+    function endpoint() {
+        return "{$MODULE_CUSTOM_API}";
+    }
+
+    function number(value) {
+        var n = parseFloat(value);
+        return isFinite(n) ? n : 0;
+    }
+
+    function push(name, value) {
+        history[name].push(number(value));
+        if (history[name].length > maxPoints) history[name].shift();
+    }
+
+    function setText(key, value) {
+        root.querySelectorAll('[data-clicd-info="' + key + '"]').forEach(function(node){
+            if (typeof value !== 'object') node.textContent = value;
+        });
+    }
+
+    function setGauge(key, value) {
+        var pct = Math.max(0, Math.min(100, number(value)));
+        root.querySelectorAll('[data-gauge="' + key + '"]').forEach(function(node){
+            node.style.setProperty('--p', pct + '%');
+        });
+    }
+
+    function setProgress(key, value) {
+        var pct = Math.max(0, Math.min(100, number(value)));
+        root.querySelectorAll('[data-progress="' + key + '"]').forEach(function(node){
+            node.style.width = pct + '%';
+        });
+    }
+
+    function draw(canvas, series, colors, maxValue) {
+        if (!canvas || !canvas.getContext) return;
+        var rect = canvas.getBoundingClientRect();
+        var ratio = window.devicePixelRatio || 1;
+        var width = Math.max(220, Math.floor(rect.width || canvas.clientWidth || 220));
+        var height = Math.max(120, Math.floor(rect.height || canvas.clientHeight || 132));
+        if (canvas.width !== width * ratio || canvas.height !== height * ratio) {
+            canvas.width = width * ratio;
+            canvas.height = height * ratio;
+        }
+        var ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        ctx.clearRect(0, 0, width, height);
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 1;
+        for (var i = 1; i < 4; i++) {
+            var y = Math.round((height / 4) * i);
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(width, y);
+            ctx.stroke();
+        }
+        series.forEach(function(values, idx){
+            if (!values.length) return;
+            var color = colors[idx] || '#2f80ed';
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            values.forEach(function(value, i){
+                var x = values.length <= 1 ? width : (i / (values.length - 1)) * width;
+                var y = height - (Math.max(0, Math.min(maxValue, number(value))) / maxValue) * (height - 6) - 3;
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+        });
+    }
+
+    function redraw() {
+        draw(root.querySelector('[data-chart="cpu_percent"]'), [history.cpu_percent], ['#2f80ed'], 100);
+        draw(root.querySelector('[data-chart="mem_percent"]'), [history.mem_percent], ['#10b981'], 100);
+        var netMax = Math.max(1, Math.max.apply(null, history.network_in.concat(history.network_out, [1])));
+        draw(root.querySelector('[data-chart="network"]'), [history.network_in, history.network_out], ['#2f80ed', '#f59e0b'], netMax);
+        var ioMax = Math.max(1, Math.max.apply(null, history.disk_read.concat(history.disk_write, [1])));
+        draw(root.querySelector('[data-chart="diskio"]'), [history.disk_read, history.disk_write], ['#10b981', '#ef4444'], ioMax);
+    }
+
+    function showInfoError(text) {
+        var debug = document.getElementById('clicd-info-debug');
+        if (debug) {
+            debug.style.display = 'block';
+            debug.textContent = text || 'info load failed';
+        }
+    }
+
+    function loadInfo() {
+        var body = new URLSearchParams();
+        body.set('id', '{$service_id}');
+        body.set('func', 'infoData');
+        fetch(endpoint(), {
+            method:'POST',
+            headers:{
+                'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8',
+                'Authorization':'JWT {$Think.get.jwt}'
+            },
+            credentials:'same-origin',
+            body: body.toString()
+        })
+            .then(function(res){ return res.json(); })
+            .then(function(json){
+                if (!json || (json.status !== 200 && json.status !== 'success') || !json.data) {
+                    showInfoError(json && json.msg ? json.msg : 'info load failed');
+                    return;
+                }
+                var data = json.data;
+                Object.keys(data).forEach(function(key){ setText(key, data[key]); });
+                ['cpu_percent','mem_percent','load_percent','disk_percent'].forEach(function(key){ setGauge(key, data[key]); });
+                setProgress('traffic_percent', data.traffic_percent);
+                push('cpu_percent', data.cpu_percent);
+                push('mem_percent', data.mem_percent);
+                push('network_in', data.net_in_bps);
+                push('network_out', data.net_out_bps);
+                push('disk_read', data.disk_read_bps);
+                push('disk_write', data.disk_write_bps);
+                redraw();
+            })
+            .catch(function(error){
+                showInfoError(error && error.message ? error.message : 'info request failed');
+            });
+    }
+
+    loadInfo();
+    window.setInterval(loadInfo, 10000);
+    window.addEventListener('resize', function(){ window.setTimeout(redraw, 50); });
+})();
+</script>
