@@ -1445,6 +1445,7 @@ function clicd_firewallUpdate($params)
     $input = clicd_json_input();
     $enabled = clicd_param_value($input, 'enabled', 'true');
     $enabled = filter_var($enabled, FILTER_VALIDATE_BOOLEAN);
+    $defaultAction = strtoupper(trim((string)clicd_param_value($input, 'default_action', '')));
     $rules = clicd_param_value($input, 'rules', '[]');
 
     if (is_string($rules)) {
@@ -1461,6 +1462,9 @@ function clicd_firewallUpdate($params)
         'enabled' => $enabled,
         'rules'   => $rules,
     ];
+    if (in_array($defaultAction, ['ACCEPT', 'DROP'], true)) {
+        $payload['default_action'] = $defaultAction;
+    }
 
     $container = [];
     $containerId = clicd_container_api_id($params, $container);
@@ -1526,6 +1530,7 @@ function clicd_firewall_ajax($params)
     // update
     $enabled = clicd_param_value($input, 'enabled', 'true');
     $enabled = filter_var($enabled, FILTER_VALIDATE_BOOLEAN);
+    $defaultAction = strtoupper(trim((string)clicd_param_value($input, 'default_action', '')));
     $rules = clicd_param_value($input, 'rules', '[]');
 
     if (is_string($rules)) {
@@ -1542,6 +1547,9 @@ function clicd_firewall_ajax($params)
         'enabled' => $enabled,
         'rules'   => $rules,
     ];
+    if (in_array($defaultAction, ['ACCEPT', 'DROP'], true)) {
+        $payload['default_action'] = $defaultAction;
+    }
 
     $call = clicd_request_debug($params, '/api/v1/containers/' . rawurlencode($containerId) . '/firewall', $payload, 'PUT', 30);
     $debug[] = $call['debug'];
