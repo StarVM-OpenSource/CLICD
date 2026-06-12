@@ -37,10 +37,10 @@ function clicd_json_response($payload)
 function clicd_MetaData()
 {
     return [
-        'DisplayName' => 'CLICD 对接模块 by 欢-Huan and ChatGPT 5.5',
+        'DisplayName' => 'CLICD 对接模块 by 欢-Huan and ChatGPT 5.5 and DeepSeek V4',
         'APIVersion'  => '1.1',
         'HelpDoc'     => 'https://github.com/MengMengCode/CLICD',
-        'version'     => '1.0.1',
+        'version'     => '1.0.5',
     ];
 }
 
@@ -59,10 +59,19 @@ function clicd_ConfigOptions()
         ['type' => 'text', 'name' => '入站流量 GB', 'description' => 'in_out 模式下入站流量限制，0 表示不限制', 'default' => '0', 'key' => 'traffic_in_gb'],
         ['type' => 'text', 'name' => '出站流量 GB', 'description' => 'in_out 模式下出站流量限制，0 表示不限制', 'default' => '0', 'key' => 'traffic_out_gb'],
         ['type' => 'text', 'name' => 'IO 速度 MB/s', 'description' => '磁盘 IO 限制，0 表示不限制', 'default' => '0', 'key' => 'io_speed_mbps'],
+        ['type' => 'dropdown', 'name' => '分配 NAT', 'description' => '开通时是否分配 NAT 端口映射', 'default' => 'true', 'key' => 'assign_nat', 'options' => ['true' => '启用', 'false' => '禁用']],
         ['type' => 'text', 'name' => 'NAT 端口数量', 'description' => '开通时分配的端口映射数量，最小 2', 'default' => '2', 'key' => 'port_mapping_count'],
         ['type' => 'text', 'name' => '快照配额', 'description' => '每台实例允许保留的快照数量', 'default' => '3', 'key' => 'snapshot_limit'],
         ['type' => 'text', 'name' => '额外端口', 'description' => '逗号分隔的容器端口，例如 80,443', 'default' => '', 'key' => 'extra_ports'],
+        ['type' => 'dropdown', 'name' => '自动公网 IPv4', 'description' => '开通时是否从 CLICD 公网 IPv4 池分配独立 IPv4', 'default' => 'false', 'key' => 'assign_ipv4', 'options' => ['true' => '启用', 'false' => '禁用']],
+        ['type' => 'text', 'name' => '公网 IPv4 数量', 'description' => '自动分配公网 IPv4 的数量，通常填写 1', 'default' => '1', 'key' => 'ipv4_count'],
+        ['type' => 'text', 'name' => '指定公网 IPv4', 'description' => '指定分配的公网 IPv4，多个用逗号分隔；留空则从地址池自动分配', 'default' => '', 'key' => 'public_ipv4s'],
         ['type' => 'dropdown', 'name' => '自动 IPv6', 'description' => '开通时自动分配 IPv6', 'default' => 'false', 'key' => 'assign_ipv6', 'options' => ['true' => '启用', 'false' => '禁用']],
+        ['type' => 'text', 'name' => 'IPv6 数量', 'description' => '自动分配 IPv6 的数量，通常填写 1', 'default' => '1', 'key' => 'ipv6_count'],
+        ['type' => 'text', 'name' => '指定 IPv6', 'description' => '指定分配的 IPv6 地址，多个用逗号分隔；留空则从地址池自动分配', 'default' => '', 'key' => 'ipv6_addresses'],
+        ['type' => 'dropdown', 'name' => 'SSH 鉴权模式', 'description' => 'auto_password=自动生成密码，password=使用指定密码，key=使用 SSH 公钥', 'default' => 'auto_password', 'key' => 'ssh_auth_mode', 'options' => ['auto_password' => '自动密码', 'password' => '指定密码', 'key' => 'SSH 公钥']],
+        ['type' => 'text', 'name' => '指定 SSH 密码', 'description' => 'SSH 鉴权模式为 password 时使用；其他模式留空', 'default' => '', 'key' => 'ssh_password'],
+        ['type' => 'text', 'name' => 'SSH 公钥', 'description' => 'SSH 鉴权模式为 key 时使用；填写完整 public key', 'default' => '', 'key' => 'ssh_public_key'],
         ['type' => 'dropdown', 'name' => '同步到期时间', 'description' => '开通/续费时把魔方到期日期同步到 CLICD，格式会转换为 YYYY-MM-DD', 'default' => 'true', 'key' => 'sync_expiry', 'options' => ['true' => '启用', 'false' => '禁用']],
     ];
 }
@@ -203,13 +212,98 @@ function clicd_container_name($params)
     return trim($name, '-.');
 }
 
-function clicd_public_host($params, $container = [])
+function clicd_host_id($params)
+{
+    foreach (['hostid', 'id', 'serviceid', 'service_id', 'relid'] as $key) {
+        if (!empty($params[$key]) && is_numeric($params[$key])) {
+            return (int)$params[$key];
+        }
+    }
+    return 0;
+}
+function clicd_first_string($value)
+{
+    if (is_array($value)) {
+        foreach ($value as $item) {
+            if (is_array($item)) {
+                foreach (['address', 'ip', 'ipv4', 'public_ip', 'public_ipv4'] as $key) {
+                    if (!empty($item[$key])) {
+                        $itemValue = trim((string)$item[$key]);
+                        if ($itemValue !== '') {
+                            return $itemValue;
+                        }
+                    }
+                }
+                continue;
+            }
+
+            $itemValue = trim((string)$item);
+            if ($itemValue !== '') {
+                return $itemValue;
+            }
+        }
+        return '';
+    }
+
+    $value = trim((string)$value);
+    return $value;
+}
+
+function clicd_public_host_from_container($container = [])
 {
     if (is_array($container)) {
-        foreach (['nat_public_ip', 'public_ip', 'host_ip', 'external_ip', 'node_ip', 'nat_host'] as $key) {
+        foreach (['public_ipv4s', 'public_ipv4', 'public_ip', 'ipv4_addresses', 'ipv4', 'nat_public_ip', 'host_ip', 'external_ip', 'node_ip', 'nat_host'] as $key) {
             if (!empty($container[$key])) {
-                return trim((string)$container[$key]);
+                $value = clicd_first_string($container[$key]);
+                if ($value !== '') {
+                    return $value;
+                }
             }
+        }
+    }
+
+    return '';
+}
+
+function clicd_public_ipv4_from_routing($params, $container = [])
+{
+    if (!is_array($container)) {
+        return '';
+    }
+
+    $containerId = isset($container['id']) ? (string)$container['id'] : '';
+    $containerName = isset($container['name']) ? (string)$container['name'] : clicd_container_name($params);
+
+    $res = clicd_request($params, '/api/v1/routing', [], 'GET', 30);
+    if (!clicd_success($res) || empty($res['data']['ipv4_assignments']) || !is_array($res['data']['ipv4_assignments'])) {
+        return '';
+    }
+
+    foreach ($res['data']['ipv4_assignments'] as $assignment) {
+        if (!is_array($assignment)) {
+            continue;
+        }
+        $matchId = $containerId !== '' && isset($assignment['container_id']) && (string)$assignment['container_id'] === $containerId;
+        $matchName = $containerName !== '' && isset($assignment['container_name']) && (string)$assignment['container_name'] === $containerName;
+        if ($matchId || $matchName) {
+            return clicd_first_string($assignment['address'] ?? '');
+        }
+    }
+
+    return '';
+}
+
+function clicd_public_host($params, $container = [], $useRouting = false)
+{
+    $fromContainer = clicd_public_host_from_container($container);
+    if ($fromContainer !== '') {
+        return $fromContainer;
+    }
+
+    if ($useRouting) {
+        $fromRouting = clicd_public_ipv4_from_routing($params, $container);
+        if ($fromRouting !== '') {
+            return $fromRouting;
         }
     }
 
@@ -403,6 +497,24 @@ function clicd_extra_ports($value)
     return array_values(array_unique($ports));
 }
 
+function clicd_csv_values($value)
+{
+    if (is_array($value)) {
+        $parts = $value;
+    } else {
+        $parts = preg_split('/[,;\s]+/', (string)$value);
+    }
+
+    $result = [];
+    foreach ($parts as $part) {
+        $part = trim((string)$part);
+        if ($part !== '') {
+            $result[] = $part;
+        }
+    }
+    return array_values(array_unique($result));
+}
+
 function clicd_expiry_from_params($params)
 {
     $options = $params['configoptions'] ?? [];
@@ -435,6 +547,21 @@ function clicd_container_payload($params)
 {
     $options = $params['configoptions'] ?? [];
     $trafficMode = $options['traffic_mode'] ?? 'total';
+    $assignNat = clicd_bool_option($options['assign_nat'] ?? 'true', true);
+    $assignIpv4 = clicd_bool_option($options['assign_ipv4'] ?? 'false', false);
+    $assignIpv6 = clicd_bool_option($options['assign_ipv6'] ?? 'false', false);
+    $publicIpv4s = clicd_csv_values($options['public_ipv4s'] ?? '');
+    $ipv6Addresses = clicd_csv_values($options['ipv6_addresses'] ?? '');
+    if (!empty($publicIpv4s)) {
+        $assignIpv4 = true;
+    }
+    if (!empty($ipv6Addresses)) {
+        $assignIpv6 = true;
+    }
+    $sshAuthMode = strtolower(trim((string)($options['ssh_auth_mode'] ?? 'auto_password')));
+    if (!in_array($sshAuthMode, ['auto_password', 'password', 'key'], true)) {
+        $sshAuthMode = 'auto_password';
+    }
 
     return [
         'name'               => clicd_container_name($params),
@@ -451,9 +578,18 @@ function clicd_container_payload($params)
         'traffic_out_gb'     => clicd_int_option($options, 'traffic_out_gb', 0),
         'io_speed_mbps'      => clicd_int_option($options, 'io_speed_mbps', 0),
         'extra_ports'        => clicd_extra_ports($options['extra_ports'] ?? ''),
-        'port_mapping_count' => max(2, clicd_int_option($options, 'port_mapping_count', 2)),
+        'port_mapping_count' => $assignNat ? max(2, clicd_int_option($options, 'port_mapping_count', 2)) : 0,
+        'assign_nat'         => $assignNat,
+        'assign_ipv4'        => $assignIpv4,
+        'ipv4_count'         => max(1, clicd_int_option($options, 'ipv4_count', 1)),
+        'public_ipv4s'       => $publicIpv4s,
         'snapshot_limit'     => max(1, clicd_int_option($options, 'snapshot_limit', 3)),
-        'assign_ipv6'        => clicd_bool_option($options['assign_ipv6'] ?? 'false', false),
+        'assign_ipv6'        => $assignIpv6,
+        'ipv6_count'         => max(1, clicd_int_option($options, 'ipv6_count', 1)),
+        'ipv6_addresses'     => $ipv6Addresses,
+        'ssh_auth_mode'      => $sshAuthMode,
+        'ssh_password'       => (string)($options['ssh_password'] ?? ''),
+        'ssh_public_key'     => trim((string)($options['ssh_public_key'] ?? '')),
         'expires_at'         => clicd_expiry_from_params($params),
     ];
 }
@@ -477,6 +613,9 @@ function clicd_request_value($key, $default = '')
 {
     if (function_exists('input')) {
         $value = input('param.' . $key);
+        if ($value === null) {
+            $value = input('*.' . $key);
+        }
         return $value === null ? $default : $value;
     }
     if (isset($_POST[$key])) {
@@ -821,16 +960,35 @@ function clicd_info_ajax($params)
     ];
 }
 
+function clicd_domain_status_from_container($container)
+{
+    if (!is_array($container)) {
+        return 'Active';
+    }
+
+    if (!empty($container['policy_blocked'])) {
+        return 'Suspended';
+    }
+
+    $status = strtolower(trim((string)($container['status'] ?? '')));
+    if (in_array($status, ['suspended', 'blocked', 'policy_blocked', 'disabled'], true)) {
+        return 'Suspended';
+    }
+
+    return 'Active';
+}
+
 function clicd_update_host_from_container($params, $container)
 {
-    if (empty($params['hostid']) || !is_array($container)) {
+    $hostId = clicd_host_id($params);
+    if ($hostId <= 0 || !is_array($container)) {
         return;
     }
 
     $update = [
-        'domainstatus' => (($container['status'] ?? '') === 'running') ? 'Active' : 'Suspended',
+        'domainstatus' => clicd_domain_status_from_container($container),
         'username'     => 'root',
-        'dedicatedip'  => clicd_public_host($params, $container),
+        'dedicatedip'  => clicd_public_host($params, $container, true),
     ];
 
     $sshPort = clicd_container_ssh_port($container);
@@ -844,7 +1002,7 @@ function clicd_update_host_from_container($params, $container)
     }
 
     try {
-        Db::name('host')->where('id', $params['hostid'])->update($update);
+        Db::name('host')->where('id', $hostId)->update($update);
     } catch (\Exception $e) {
         clicd_debug('host update failed', $e->getMessage());
     }
@@ -879,19 +1037,22 @@ function clicd_CreateAccount($params)
         return ['status' => 'error', 'msg' => clicd_message($res, '开通失败')];
     }
 
-    $detail = clicd_find_container($params);
-    if (clicd_success($detail) && isset($detail['data'])) {
-        clicd_update_host_from_container($params, $detail['data']);
-    } elseif (!empty($params['hostid'])) {
+    $hostId = clicd_host_id($params);
+    if ($hostId > 0) {
         try {
-            Db::name('host')->where('id', $params['hostid'])->update([
+            Db::name('host')->where('id', $hostId)->update([
                 'domainstatus' => 'Active',
                 'username'     => 'root',
-                'dedicatedip'  => clicd_public_host($params),
+                'dedicatedip'  => clicd_public_ipv4_from_routing($params) ?: clicd_public_host($params),
             ]);
         } catch (\Exception $e) {
             return ['status' => 'error', 'msg' => '开通成功但同步魔方数据库失败: ' . $e->getMessage()];
         }
+    }
+
+    $detail = clicd_find_container($params);
+    if (clicd_success($detail) && isset($detail['data'])) {
+        clicd_update_host_from_container($params, $detail['data']);
     }
 
     return ['status' => 'success', 'msg' => clicd_message($res, '开通成功')];
@@ -1001,9 +1162,10 @@ function clicd_CrackPassword($params, $new_pass)
     }
 
     $password = $res['data']['ssh_password'] ?? $res['data']['password'] ?? $new_pass;
-    if (!empty($params['hostid'])) {
+    $hostId = clicd_host_id($params);
+    if ($hostId > 0) {
         try {
-            Db::name('host')->where('id', $params['hostid'])->update(['password' => clicd_store_password($password)]);
+            Db::name('host')->where('id', $hostId)->update(['password' => clicd_store_password($password)]);
             $detail = clicd_find_container($params);
             if (clicd_success($detail) && isset($detail['data'])) {
                 clicd_update_host_from_container($params, $detail['data']);
@@ -1262,19 +1424,155 @@ function clicd_webssh($params)
     ];
 }
 
+function clicd_firewallList($params)
+{
+    $container = [];
+    $containerId = clicd_container_api_id($params, $container);
+    $res = clicd_request($params, '/api/v1/containers/' . rawurlencode($containerId) . '/firewall', [], 'GET', 30);
+    if (!clicd_success($res) || empty($res['data'])) {
+        return ['status' => 'error', 'msg' => clicd_message($res, '获取防火墙设置失败')];
+    }
+
+    return [
+        'status' => 200,
+        'msg'    => '获取成功',
+        'data'   => $res['data'],
+    ];
+}
+
+function clicd_firewallUpdate($params)
+{
+    $input = clicd_json_input();
+    $enabled = clicd_param_value($input, 'enabled', 'true');
+    $enabled = filter_var($enabled, FILTER_VALIDATE_BOOLEAN);
+    $rules = clicd_param_value($input, 'rules', '[]');
+
+    if (is_string($rules)) {
+        $decodedRules = json_decode($rules, true);
+        if (is_array($decodedRules)) {
+            $rules = $decodedRules;
+        }
+    }
+    if (!is_array($rules)) {
+        $rules = [];
+    }
+
+    $payload = [
+        'enabled' => $enabled,
+        'rules'   => $rules,
+    ];
+
+    $container = [];
+    $containerId = clicd_container_api_id($params, $container);
+    $res = clicd_request($params, '/api/v1/containers/' . rawurlencode($containerId) . '/firewall', $payload, 'PUT', 30);
+    if (!clicd_success($res)) {
+        return ['status' => 'error', 'msg' => clicd_message($res, '更新防火墙设置失败')];
+    }
+
+    // GET after PUT to confirm the actual state after CLICD processes it
+    $getRes = clicd_request($params, '/api/v1/containers/' . rawurlencode($containerId) . '/firewall', [], 'GET', 30);
+    $actualData = [];
+    if (clicd_success($getRes) && !empty($getRes['data']) && is_array($getRes['data'])) {
+        $actualData = $getRes['data'];
+    }
+
+    return [
+        'status' => 200,
+        'msg'    => clicd_message($res, '防火墙设置已更新'),
+        'data'   => $actualData,
+    ];
+}
+
+function clicd_firewall_ajax($params)
+{
+    $input = clicd_json_input();
+    $action = strtolower(trim((string)clicd_param_value($input, 'action', '')));
+    $debug = [clicd_debug_entry('Firewall ajax received', [
+        'action' => $action,
+        'input'  => $input,
+        'query'  => $_GET,
+    ])];
+
+    $container = [];
+    $containerId = clicd_container_api_id($params, $container);
+    $debug[] = clicd_debug_entry('Container resolved', [
+        'container_id' => $containerId,
+        'container'    => [
+            'id'   => $container['id'] ?? null,
+            'uuid' => $container['uuid'] ?? null,
+            'name' => $container['name'] ?? null,
+        ],
+    ]);
+
+    if (!in_array($action, ['list', 'update'], true)) {
+        return ['status' => 'error', 'msg' => '未知防火墙操作', 'debug' => $debug];
+    }
+
+    if ($action === 'list') {
+        $call = clicd_request_debug($params, '/api/v1/containers/' . rawurlencode($containerId) . '/firewall', [], 'GET', 30);
+        $debug[] = $call['debug'];
+        $res = $call['response'];
+        if (!clicd_success($res) || empty($res['data'])) {
+            return ['status' => 'error', 'msg' => clicd_message($res, '获取防火墙设置失败'), 'debug' => $debug];
+        }
+        return [
+            'status' => 'success',
+            'msg'    => '获取成功',
+            'data'   => $res['data'],
+            'debug'  => $debug,
+        ];
+    }
+
+    // update
+    $enabled = clicd_param_value($input, 'enabled', 'true');
+    $enabled = filter_var($enabled, FILTER_VALIDATE_BOOLEAN);
+    $rules = clicd_param_value($input, 'rules', '[]');
+
+    if (is_string($rules)) {
+        $decodedRules = json_decode($rules, true);
+        if (is_array($decodedRules)) {
+            $rules = $decodedRules;
+        }
+    }
+    if (!is_array($rules)) {
+        $rules = [];
+    }
+
+    $payload = [
+        'enabled' => $enabled,
+        'rules'   => $rules,
+    ];
+
+    $call = clicd_request_debug($params, '/api/v1/containers/' . rawurlencode($containerId) . '/firewall', $payload, 'PUT', 30);
+    $debug[] = $call['debug'];
+    $res = $call['response'];
+
+    if (!clicd_success($res)) {
+        return ['status' => 'error', 'msg' => clicd_message($res, '更新防火墙设置失败'), 'debug' => $debug];
+    }
+
+    return [
+        'status' => 'success',
+        'msg'    => clicd_message($res, '防火墙设置已更新'),
+        'data'   => $res['data'] ?? [],
+        'debug'  => $debug,
+    ];
+}
+
 function clicd_AllowFunction()
 {
     return [
-        'client' => ['TrafficReset', 'randomPort', 'addNat', 'updateNat', 'deleteNat', 'natList', 'infoData', 'webssh'],
-        'admin'  => ['TrafficReset', 'randomPort', 'addNat', 'updateNat', 'deleteNat', 'natList', 'infoData', 'webssh'],
+        'client' => ['TrafficReset', 'randomPort', 'addNat', 'updateNat', 'deleteNat', 'natList', 'infoData', 'webssh', 'firewallList', 'firewallUpdate'],
+        'admin'  => ['TrafficReset', 'randomPort', 'addNat', 'updateNat', 'deleteNat', 'natList', 'infoData', 'webssh', 'firewallList', 'firewallUpdate'],
     ];
 }
 
 function clicd_ClientArea($params)
 {
     return [
-        'info' => ['name' => '实例信息'],
-        'nat'  => ['name' => 'NAT转发'],
+        'info'     => ['name' => '实例信息'],
+        'nat'      => ['name' => 'NAT转发'],
+        'firewall' => ['name' => '防火墙'],
     ];
 }
 
@@ -1287,8 +1585,11 @@ function clicd_ClientAreaOutput($params, $key)
     if ($func === 'infoajax') {
         clicd_json_response(clicd_info_ajax($params));
     }
+    if ($func === 'firewallajax') {
+        clicd_json_response(clicd_firewall_ajax($params));
+    }
 
-    if (!in_array($key, ['info', 'nat'], true)) {
+    if (!in_array($key, ['info', 'nat', 'firewall'], true)) {
         return '';
     }
 
@@ -1298,6 +1599,7 @@ function clicd_ClientAreaOutput($params, $key)
     }
 
     $c = $res['data'];
+    $publicHost = clicd_public_host($params, $c, true);
 
     if ($key === 'nat') {
         $operation = clicd_handle_nat_post($params);
@@ -1315,12 +1617,25 @@ function clicd_ClientAreaOutput($params, $key)
                 'container'     => $c,
                 'container_name'=> $c['name'] ?? clicd_container_name($params),
                 'ssh_port'      => $c['ssh_port'] ?? '',
-                'server_ip'     => $params['server_ip'] ?? parse_url(clicd_base_url($params), PHP_URL_HOST),
-                'nat_host'      => $params['server_ip'] ?? parse_url(clicd_base_url($params), PHP_URL_HOST),
+                'server_ip'     => $publicHost,
+                'nat_host'      => $publicHost,
                 'operation_msg' => $operationMsg,
                 'service_id'    => clicd_request_value('id', $params['hostid'] ?? ''),
                 'area_key'      => 'nat',
                 'port_mappings' => clicd_normalize_port_mappings($mappings),
+            ],
+        ];
+    }
+
+    if ($key === 'firewall') {
+        return [
+            'template' => 'templates/firewall.html',
+            'vars'     => [
+                'container'      => $c,
+                'container_name' => $c['name'] ?? clicd_container_name($params),
+                'server_ip'      => $publicHost,
+                'service_id'     => clicd_request_value('id', $params['hostid'] ?? ''),
+                'area_key'       => 'firewall',
             ],
         ];
     }
@@ -1342,8 +1657,8 @@ function clicd_ClientAreaOutput($params, $key)
         'vars'     => [
             'container'      => $c,
             'status_text'    => (($c['status'] ?? '') === 'running') ? '运行中' : '已关机',
-            'server_ip'      => $params['server_ip'] ?? parse_url(clicd_base_url($params), PHP_URL_HOST),
-            'ssh_host'       => $params['server_ip'] ?? parse_url(clicd_base_url($params), PHP_URL_HOST),
+            'server_ip'      => $publicHost,
+            'ssh_host'       => $publicHost,
             'ssh_port'       => $c['ssh_port'] ?? '',
             'ssh_password'   => $c['ssh_password'] ?? '',
             'ipv4'           => $c['ip'] ?? '',
@@ -1366,3 +1681,7 @@ function clicd_ClientAreaOutput($params, $key)
         ],
     ];
 }
+
+
+
+

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $ws = isset($_GET['ws']) ? (string)$_GET['ws'] : (isset($_GET['amp;ws']) ? (string)$_GET['amp;ws'] : '');
 $protocol = isset($_GET['protocol']) ? (string)$_GET['protocol'] : (isset($_GET['amp;protocol']) ? (string)$_GET['amp;protocol'] : '');
 $container = isset($_GET['container']) ? (string)$_GET['container'] : (isset($_GET['amp;container']) ? (string)$_GET['amp;container'] : '');
