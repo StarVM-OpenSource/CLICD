@@ -40,7 +40,7 @@ function clicd_MetaData()
         'DisplayName' => 'CLICD 对接模块 by 欢-Huan and ChatGPT 5.5 and DeepSeek V4',
         'APIVersion'  => '1.1',
         'HelpDoc'     => 'https://github.com/MengMengCode/CLICD',
-        'version'     => '1.0.5',
+        'version'     => '1.0.10',
     ];
 }
 
@@ -626,9 +626,24 @@ function clicd_request_value($key, $default = '')
 
 function clicd_json_input()
 {
+    $input = [];
+    if (!empty($_POST) && is_array($_POST)) {
+        $input = $_POST;
+    }
+
     $raw = file_get_contents('php://input');
     $data = json_decode((string)$raw, true);
-    return is_array($data) ? $data : [];
+    if (is_array($data)) {
+        return array_merge($input, $data);
+    }
+
+    $form = [];
+    parse_str((string)$raw, $form);
+    if (!empty($form) && is_array($form)) {
+        return array_merge($input, $form);
+    }
+
+    return $input;
 }
 
 function clicd_param_value($data, $key, $default = '')
@@ -1689,7 +1704,3 @@ function clicd_ClientAreaOutput($params, $key)
         ],
     ];
 }
-
-
-
-

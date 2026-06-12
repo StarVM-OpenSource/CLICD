@@ -4,32 +4,6 @@
         color: #1f2937
     }
 
-    .clicd-fw-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 12px;
-        margin-bottom: 16px
-    }
-
-    .clicd-fw-card {
-        border: 1px solid #e5e7eb;
-        border-radius: 6px;
-        padding: 12px;
-        background: #fff
-    }
-
-    .clicd-fw-label {
-        color: #6b7280;
-        font-size: 12px;
-        margin-bottom: 4px
-    }
-
-    .clicd-fw-value {
-        font-size: 18px;
-        font-weight: 600;
-        word-break: break-all
-    }
-
     .clicd-fw-section {
         border: 1px solid #e5e7eb;
         border-radius: 6px;
@@ -43,22 +17,60 @@
         margin: 18px 0 8px
     }
 
+    .clicd-fw-title-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 18px 0 8px
+    }
+
+    .clicd-fw-title-row .clicd-fw-title {
+        margin: 0
+    }
+
     .clicd-fw-muted {
         color: #6b7280
     }
 
-    .clicd-fw-toggle-row {
+    .clicd-fw-settings {
+        margin-bottom: 22px
+    }
+
+    .clicd-fw-settings-head {
         display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 26px
+    }
+
+    .clicd-fw-settings-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #111827;
+        line-height: 1.35
+    }
+
+    .clicd-fw-settings-actions {
+        display: flex;
+        justify-content: flex-end;
         align-items: center;
-        gap: 12px;
-        margin-bottom: 12px
+        gap: 10px;
+        margin-top: 12px
+    }
+
+    .clicd-fw-save-hint {
+        color: #6b7280;
+        font-size: 13px
     }
 
     .clicd-fw-toggle {
         position: relative;
         display: inline-flex;
-        width: 48px;
-        height: 26px;
+        width: 56px;
+        height: 30px;
+        flex: 0 0 auto;
         cursor: pointer
     }
 
@@ -71,8 +83,8 @@
     .clicd-fw-toggle-slider {
         position: absolute;
         inset: 0;
-        background: #d1d5db;
-        border-radius: 26px;
+        background: #cfd5df;
+        border-radius: 999px;
         transition: .25s
     }
 
@@ -83,16 +95,10 @@
         height: 22px;
         border-radius: 50%;
         background: #fff;
-        top: 2px;
-        left: 2px;
-        transition: .25s
-    }
-
-    .clicd-fw-toggle .clicd-fw-toggle-slider:before {
-        width: 16px;
-        height: 16px;
-        top: 2px;
-        left: 2px
+        top: 4px;
+        left: 4px;
+        transition: .25s;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, .18)
     }
 
     .clicd-fw-toggle input:checked+.clicd-fw-toggle-slider {
@@ -100,24 +106,29 @@
     }
 
     .clicd-fw-toggle input:checked+.clicd-fw-toggle-slider:before {
-        transform: translateX(22px)
+        transform: translateX(26px)
     }
 
-    .clicd-fw-toggle-label {
-        font-size: 14px;
-        font-weight: 500
+    .clicd-fw-toggle-sm {
+        width: 36px;
+        height: 20px
+    }
+
+    .clicd-fw-toggle-sm .clicd-fw-toggle-slider:before {
+        width: 16px;
+        height: 16px;
+        top: 2px;
+        left: 2px
+    }
+
+    .clicd-fw-toggle-sm input:checked+.clicd-fw-toggle-slider:before {
+        transform: translateX(16px)
     }
 
     .clicd-fw-status {
         font-size: 13px;
-        color: #6b7280
-    }
-
-    .clicd-fw-rule-form {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 10px;
-        align-items: end
+        color: #6b7280;
+        line-height: 1.5
     }
 
     .clicd-fw-field label {
@@ -141,6 +152,13 @@
     .clicd-fw-select:focus {
         border-color: #2563eb;
         outline: none
+    }
+
+    .clicd-fw-field-help {
+        color: #9ca3af;
+        font-size: 12px;
+        line-height: 1.5;
+        margin-top: 6px
     }
 
     .clicd-fw-actions {
@@ -178,6 +196,12 @@
         color: #fff
     }
 
+    .clicd-fw-btn-dark {
+        border-color: #000;
+        background: #000;
+        color: #fff
+    }
+
     .clicd-fw-btn-sm {
         height: 30px;
         padding: 0 10px;
@@ -185,26 +209,47 @@
     }
 
     .clicd-fw-rules {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 8px
+        margin-top: 8px;
+        overflow-x: auto;
+        background: #fff
     }
 
-    .clicd-fw-rule {
-        border: 1px solid #e5e7eb;
-        border-radius: 6px;
-        background: #fff;
-        padding: 12px
+    .clicd-fw-table {
+        width: 100%;
+        min-width: 920px;
+        border-collapse: collapse;
+        table-layout: fixed
     }
 
-    .clicd-fw-rule-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        margin-bottom: 8px;
-        flex-wrap: wrap
+    .clicd-fw-table th,
+    .clicd-fw-table td {
+        padding: 13px 14px;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: left;
+        vertical-align: middle;
+        color: #111827;
+        font-size: 14px;
+        white-space: nowrap
+    }
+
+    .clicd-fw-table th {
+        background: #f8fafc;
+        color: #6b7280;
+        font-weight: 600
+    }
+
+    .clicd-fw-table tbody tr:hover {
+        background: #f9fafb
+    }
+
+    .clicd-fw-table td:nth-child(8) {
+        white-space: normal;
+        word-break: break-word
+    }
+
+    .clicd-fw-table th:last-child,
+    .clicd-fw-table td:last-child {
+        text-align: right
     }
 
     .clicd-fw-rule-direction {
@@ -247,34 +292,41 @@
         color: #991b1b
     }
 
-    .clicd-fw-rule-desc {
-        display: flex;
+    .clicd-fw-rule-network {
+        display: inline-flex;
         align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-bottom: 8px
-    }
-
-    .clicd-fw-rule-detail {
-        font-size: 13px;
+        padding: 3px 8px;
+        border-radius: 4px;
+        background: #f3f4f6;
         color: #374151;
+        font-size: 12px;
+        font-weight: 600
+    }
+
+    .clicd-fw-rule-ops {
         display: flex;
         align-items: center;
         gap: 8px;
-        flex-wrap: wrap
+        justify-content: flex-end
     }
 
-    .clicd-fw-rule-detail .sep {
-        color: #d1d5db
+    .clicd-fw-icon-btn {
+        width: 30px;
+        height: 30px;
+        border: 0;
+        border-radius: 4px;
+        background: transparent;
+        color: #9ca3af;
+        cursor: pointer;
+        font-size: 17px;
+        line-height: 30px;
+        padding: 0;
+        text-align: center
     }
 
-    .clicd-fw-rule-edit-row {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 8px;
-        margin-top: 8px;
-        padding-top: 8px;
-        border-top: 1px solid #e5e7eb
+    .clicd-fw-icon-btn:hover {
+        background: #f3f4f6;
+        color: #374151
     }
 
     .clicd-fw-message {
@@ -325,11 +377,69 @@
         padding: 16px
     }
 
+    .clicd-fw-rule-modal {
+        width: min(560px, 100%);
+        max-height: calc(100vh - 48px);
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden
+    }
+
+    .clicd-fw-modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 20px 26px;
+        border-bottom: 1px solid #e5e7eb
+    }
+
+    .clicd-fw-modal-close {
+        width: 28px;
+        height: 28px;
+        border: 0;
+        background: transparent;
+        color: #6b7280;
+        cursor: pointer;
+        font-size: 28px;
+        line-height: 24px;
+        padding: 0
+    }
+
+    .clicd-fw-rule-modal-body {
+        padding: 24px 26px 8px;
+        overflow-y: auto
+    }
+
+    .clicd-fw-rule-modal-body .clicd-fw-field {
+        margin-bottom: 16px
+    }
+
+    .clicd-fw-rule-modal-body .clicd-fw-input,
+    .clicd-fw-rule-modal-body .clicd-fw-select {
+        height: 48px;
+        border-radius: 6px;
+        padding: 0 14px;
+        font-size: 15px
+    }
+
+    .clicd-fw-rule-modal-body .clicd-fw-field label {
+        color: #4b5563;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px
+    }
+
     .clicd-fw-modal-title {
         font-size: 16px;
         font-weight: 700;
         color: #111827;
         margin-bottom: 8px
+    }
+
+    .clicd-fw-modal-header .clicd-fw-modal-title {
+        margin-bottom: 0
     }
 
     .clicd-fw-modal-body {
@@ -342,119 +452,201 @@
     .clicd-fw-modal-actions {
         display: flex;
         justify-content: flex-end;
-        gap: 8px
+        gap: 12px
+    }
+
+    .clicd-fw-rule-modal .clicd-fw-modal-actions {
+        padding: 6px 26px 24px
+    }
+
+    .clicd-fw-rule-modal .clicd-fw-modal-actions .clicd-fw-btn {
+        height: 44px;
+        min-width: 76px;
+        font-size: 14px
     }
 
     .clicd-fw-default-action-row {
         display: flex;
         align-items: center;
-        gap: 10px;
-        margin-top: 10px
+        justify-content: space-between;
+        gap: 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        background: #fff;
+        padding: 12px 16px
     }
 
-    .clicd-fw-default-action-row label {
+    .clicd-fw-default-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #111827;
+        line-height: 1.35
+    }
+
+    .clicd-fw-default-desc {
         color: #6b7280;
-        font-size: 12px;
-        white-space: nowrap
+        font-size: 13px;
+        line-height: 1.5
     }
 
     .clicd-fw-default-action-row select {
-        height: 30px;
+        width: auto;
+        min-width: 126px;
+        height: 38px;
         border: 1px solid #d1d5db;
         border-radius: 4px;
-        padding: 0 8px;
-        font-size: 13px
+        padding: 0 12px;
+        font-size: 14px;
+        color: #111827;
+        background: #fff
+    }
+
+    .clicd-fw-network-note {
+        margin-top: 14px;
+        border: 1px solid #bfdbfe;
+        border-radius: 6px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        padding: 12px 16px;
+        line-height: 1.6
+    }
+
+    .clicd-fw-network-note-title {
+        font-weight: 700;
+        margin-bottom: 2px
+    }
+
+    @media (max-width: 640px) {
+        .clicd-fw-default-action-row,
+        .clicd-fw-settings-actions {
+            align-items: stretch;
+            flex-direction: column
+        }
+
+        .clicd-fw-default-action-row select,
+        .clicd-fw-settings-actions .clicd-fw-btn {
+            width: 100%
+        }
+
+        .clicd-fw-title-row {
+            align-items: stretch;
+            flex-direction: column
+        }
+
+        .clicd-fw-title-row .clicd-fw-btn {
+            width: 100%
+        }
+
+        .clicd-fw-modal-header,
+        .clicd-fw-rule-modal-body,
+        .clicd-fw-rule-modal .clicd-fw-modal-actions {
+            padding-left: 18px;
+            padding-right: 18px
+        }
     }
 </style>
 
 <div class="clicd-fw-panel" id="clicd-fw-panel" data-service-id="{$service_id}" data-area-key="{$area_key}">
     <div class="clicd-fw-message" id="clicd-fw-message"></div>
 
-    <div class="clicd-fw-grid">
-        <div class="clicd-fw-card">
-            <div class="clicd-fw-label">实例名称</div>
-            <div class="clicd-fw-value">{$container_name}</div>
-        </div>
-        <div class="clicd-fw-card">
-            <div class="clicd-fw-label">IP 地址</div>
-            <div class="clicd-fw-value">{$server_ip}</div>
-        </div>
-    </div>
-
-    <div class="clicd-fw-section">
-        <div class="clicd-fw-toggle-row">
+    <div class="clicd-fw-settings">
+        <div class="clicd-fw-settings-head">
+            <div>
+                <div class="clicd-fw-settings-title">防火墙</div>
+                <div class="clicd-fw-status" id="clicd-fw-status-text">加载中...</div>
+            </div>
             <label class="clicd-fw-toggle">
                 <input type="checkbox" id="clicd-fw-enabled">
                 <span class="clicd-fw-toggle-slider"></span>
             </label>
-            <span class="clicd-fw-toggle-label">启用防火墙</span>
-            <span class="clicd-fw-status" id="clicd-fw-status-text">加载中...</span>
         </div>
         <div class="clicd-fw-default-action-row">
-            <label>默认策略</label>
-            <select id="clicd-fw-default-action">
-                <option value="DROP">DROP（拒绝未匹配流量）</option>
-                <option value="ACCEPT">ACCEPT（放行未匹配流量）</option>
+            <div>
+                <div class="clicd-fw-default-title">默认动作</div>
+                <div class="clicd-fw-default-desc">没有命中下方规则时如何处理</div>
+            </div>
+            <select class="clicd-fw-select" id="clicd-fw-default-action">
+                <option value="DROP">未匹配拒绝</option>
+                <option value="ACCEPT">未匹配放行</option>
             </select>
         </div>
-    </div>
-
-    <div class="clicd-fw-title">添加规则</div>
-    <div class="clicd-fw-section" id="clicd-fw-add-section">
-        <div class="clicd-fw-rule-form">
-            <div class="clicd-fw-field">
-                <label>网络</label>
-                <select class="clicd-fw-select" id="clicd-fw-add-network">
-                    <option value="ipv4">IPv4</option>
-                    <option value="ipv6">IPv6</option>
-                    <option value="all">全部</option>
-                </select>
-            </div>
-            <div class="clicd-fw-field">
-                <label>方向</label>
-                <select class="clicd-fw-select" id="clicd-fw-add-direction">
-                    <option value="in">入站 (In)</option>
-                    <option value="out">出站 (Out)</option>
-                </select>
-            </div>
-            <div class="clicd-fw-field">
-                <label>协议</label>
-                <select class="clicd-fw-select" id="clicd-fw-add-protocol">
-                    <option value="tcp">TCP</option>
-                    <option value="udp">UDP</option>
-                </select>
-            </div>
-            <div class="clicd-fw-field">
-                <label>端口</label>
-                <input class="clicd-fw-input" id="clicd-fw-add-port" type="text" placeholder="22 / 80,443 / 8000-9000">
-            </div>
-            <div class="clicd-fw-field">
-                <label>来源 IP</label>
-                <input class="clicd-fw-input" id="clicd-fw-add-source-ip" type="text" placeholder="留空表示所有">
-            </div>
-            <div class="clicd-fw-field">
-                <label>动作</label>
-                <select class="clicd-fw-select" id="clicd-fw-add-action">
-                    <option value="ACCEPT">放行 (ACCEPT)</option>
-                    <option value="DROP">拒绝 (DROP)</option>
-                </select>
-            </div>
-            <div class="clicd-fw-field">
-                <label>说明</label>
-                <input class="clicd-fw-input" id="clicd-fw-add-desc" type="text" placeholder="例如 Allow SSH">
-            </div>
-            <div class="clicd-fw-actions">
-                <button class="clicd-fw-btn" type="button" data-clicd-fw-action="add-rule">添加规则</button>
-            </div>
+        <div class="clicd-fw-network-note">
+            <div class="clicd-fw-network-note-title">网络范围</div>
+            <div>可配置：IPv4（NAT）。 IPv4 规则覆盖 IPv4 NAT 端口映射。 NAT 入站端口按容器内部端口匹配，不是宿主机公网端口。</div>
+        </div>
+        <div class="clicd-fw-settings-actions">
+            <span class="clicd-fw-save-hint" id="clicd-fw-save-hint">当前设置已保存</span>
+            <button class="clicd-fw-btn" type="button" id="clicd-fw-save-settings" disabled>保存设置</button>
         </div>
     </div>
 
-    <div class="clicd-fw-title">防火墙规则</div>
+    <div class="clicd-fw-title-row">
+        <div class="clicd-fw-title">防火墙规则</div>
+        <button class="clicd-fw-btn clicd-fw-btn-dark" type="button" data-clicd-fw-action="open-add-rule">+ 添加规则</button>
+    </div>
     <div id="clicd-fw-rules" class="clicd-fw-rules">
         <div class="clicd-fw-section clicd-fw-muted">加载中...</div>
     </div>
 
     <pre class="clicd-fw-debug" id="clicd-fw-debug"></pre>
+
+    <div class="clicd-fw-modal-mask" id="clicd-fw-add-modal">
+        <div class="clicd-fw-modal clicd-fw-rule-modal">
+            <div class="clicd-fw-modal-header">
+                <div class="clicd-fw-modal-title" id="clicd-fw-rule-modal-title">添加规则</div>
+                <button class="clicd-fw-modal-close" type="button" id="clicd-fw-add-close" aria-label="关闭">×</button>
+            </div>
+            <div class="clicd-fw-rule-modal-body">
+                <div class="clicd-fw-field">
+                    <label>网络</label>
+                    <select class="clicd-fw-select" id="clicd-fw-add-network">
+                        <option value="ipv4">IPv4（NAT）</option>
+                        <option value="ipv6">IPv6</option>
+                        <option value="all">全部</option>
+                    </select>
+                </div>
+                <div class="clicd-fw-field">
+                    <label>方向</label>
+                    <select class="clicd-fw-select" id="clicd-fw-add-direction">
+                        <option value="in">入站 (Inbound)</option>
+                        <option value="out">出站 (Outbound)</option>
+                    </select>
+                </div>
+                <div class="clicd-fw-field">
+                    <label>协议</label>
+                    <select class="clicd-fw-select" id="clicd-fw-add-protocol">
+                        <option value="tcp">TCP</option>
+                        <option value="udp">UDP</option>
+                    </select>
+                </div>
+                <div class="clicd-fw-field">
+                    <label>端口</label>
+                    <input class="clicd-fw-input" id="clicd-fw-add-port" type="text" placeholder="如: 22 或 80,443 或 8000-9000">
+                    <div class="clicd-fw-field-help">NAT 入站填容器内部端口，例如公网 22023 -> 容器 22，这里填 22</div>
+                </div>
+                <div class="clicd-fw-field">
+                    <label>来源 IP</label>
+                    <input class="clicd-fw-input" id="clicd-fw-add-source-ip" type="text" placeholder="如: 192.168.1.0/24">
+                    <div class="clicd-fw-field-help">留空为任意 IPv4，支持 CIDR: 192.168.1.0/24</div>
+                </div>
+                <div class="clicd-fw-field">
+                    <label>动作</label>
+                    <select class="clicd-fw-select" id="clicd-fw-add-action">
+                        <option value="DROP">拒绝 (DROP)</option>
+                        <option value="ACCEPT">放行 (ACCEPT)</option>
+                    </select>
+                </div>
+                <div class="clicd-fw-field">
+                    <label>描述</label>
+                    <input class="clicd-fw-input" id="clicd-fw-add-desc" type="text" placeholder="规则描述">
+                </div>
+            </div>
+            <div class="clicd-fw-modal-actions">
+                <button class="clicd-fw-btn clicd-fw-btn-secondary" type="button" id="clicd-fw-add-cancel">取消</button>
+                <button class="clicd-fw-btn clicd-fw-btn-dark" type="button" id="clicd-fw-add-confirm">确定</button>
+            </div>
+        </div>
+    </div>
 
     <div class="clicd-fw-modal-mask" id="clicd-fw-delete-modal">
         <div class="clicd-fw-modal">
@@ -481,12 +673,23 @@
         var enabledCheckbox = document.getElementById('clicd-fw-enabled');
         var defaultActionSelect = document.getElementById('clicd-fw-default-action');
         var statusText = document.getElementById('clicd-fw-status-text');
+        var saveSettingsButton = document.getElementById('clicd-fw-save-settings');
+        var saveHint = document.getElementById('clicd-fw-save-hint');
+        var addModal = document.getElementById('clicd-fw-add-modal');
+        var addClose = document.getElementById('clicd-fw-add-close');
+        var addCancel = document.getElementById('clicd-fw-add-cancel');
+        var addConfirm = document.getElementById('clicd-fw-add-confirm');
+        var ruleModalTitle = document.getElementById('clicd-fw-rule-modal-title');
         var deleteModal = document.getElementById('clicd-fw-delete-modal');
         var deleteText = document.getElementById('clicd-fw-delete-text');
         var deleteCancel = document.getElementById('clicd-fw-delete-cancel');
         var deleteConfirm = document.getElementById('clicd-fw-delete-confirm');
         var pendingDeleteRule = null;
         var currentRules = [];
+        var ruleModalMode = 'add';
+        var editingRuleIndex = null;
+        var settingsDirty = false;
+        var busy = false;
 
         function showMessage(type, text) {
             message.className = 'clicd-fw-message' + (type === 'error' ? ' error' : '');
@@ -507,8 +710,31 @@
             return panel.getAttribute('data-service-id') || '';
         }
 
-        function setBusy(busy) {
-            panel.querySelectorAll('button, input, select').forEach(function (el) { el.disabled = !!busy; });
+        function updateSaveState() {
+            if (saveSettingsButton) {
+                saveSettingsButton.disabled = busy || !settingsDirty;
+            }
+            if (saveHint) {
+                saveHint.textContent = settingsDirty ? '有未保存更改，点击保存设置后生效' : '当前设置已保存';
+            }
+        }
+
+        function setBusy(value) {
+            busy = !!value;
+            panel.querySelectorAll('button, input, select').forEach(function (el) { el.disabled = busy; });
+            updateSaveState();
+        }
+
+        function markDirty(text) {
+            settingsDirty = true;
+            updateStatusText();
+            updateSaveState();
+            showMessage('success', text || '设置已修改，点击保存设置后生效');
+        }
+
+        function clearDirty() {
+            settingsDirty = false;
+            updateSaveState();
         }
 
         function escapeHtml(value) {
@@ -532,7 +758,7 @@
                 rulesContainer.innerHTML = '<div class="clicd-fw-section clicd-fw-muted">暂无防火墙规则</div>';
                 return;
             }
-            rulesContainer.innerHTML = currentRules.map(function (rule, idx) {
+            var rows = currentRules.map(function (rule, idx) {
                 var dir = (rule.direction || 'in').toLowerCase();
                 var proto = (rule.protocol || 'tcp').toLowerCase();
                 var action = (rule.action || 'ACCEPT').toUpperCase();
@@ -540,110 +766,98 @@
                 var port = escapeHtml(portDisplay(rule.port));
                 var srcIp = escapeHtml(sourceIpDisplay(rule.source_ip));
                 var desc = escapeHtml(rule.description || '');
-                var ruleId = escapeHtml(rule.id || '');
                 var enabled = rule.enabled !== false;
                 var enabledChecked = enabled ? 'checked' : '';
                 var dirClass = dir === 'in' ? 'clicd-fw-direction-in' : 'clicd-fw-direction-out';
                 var actionClass = 'clicd-fw-action-' + action;
-                return '<div class="clicd-fw-rule" data-rule-id="' + ruleId + '" data-rule-index="' + idx + '">' +
-                    '<div class="clicd-fw-rule-header">' +
-                    '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">' +
-                    '<span class="clicd-fw-rule-direction ' + dirClass + '">' + (dir === 'in' ? '&#8593; 入站' : '&#8595; 出站') + '</span>' +
-                    '<span class="clicd-fw-rule-action ' + actionClass + '">' + (action === 'ACCEPT' ? '放行' : '拒绝') + '</span>' +
-                    '<span style="font-size:13px;color:#6b7280">' + proto.toUpperCase() + '</span>' +
-                    '<span style="font-size:12px;background:#f3f4f6;color:#374151;padding:2px 6px;border-radius:4px">' + networkLabel(network) + '</span>' +
-                    '<span style="font-size:13px;color:#374151">' +
-                    (port !== '所有' ? '端口: ' + port : '') +
-                    (srcIp !== '任意' && port !== '所有' ? ' | ' : '') +
-                    (srcIp !== '任意' ? '来源: ' + srcIp : '') +
-                    '</span>' +
-                    '</div>' +
-                    '<div style="display:flex;align-items:center;gap:6px">' +
-                    '<label class="clicd-fw-toggle" style="width:36px;height:20px">' +
-                    '<input type="checkbox" class="clicd-fw-rule-enabled" ' + enabledChecked + '>' +
-                    '<span class="clicd-fw-toggle-slider" style="border-radius:20px"></span>' +
-                    '</label>' +
-                    '</div>' +
-                    '</div>' +
-                    '<div class="clicd-fw-rule-desc">' +
-                    '<span style="font-size:13px;color:#374151;flex:1">' + (desc || '<span style="color:#9ca3af">无说明</span>') + '</span>' +
-                    '</div>' +
-                    '<div class="clicd-fw-rule-edit-row">' +
-                    '<div class="clicd-fw-field"><label>网络</label><select class="clicd-fw-select clicd-fw-edit-field" data-field="network">' +
-                    '<option value="ipv4"' + (network === 'ipv4' ? ' selected' : '') + '>IPv4</option>' +
-                    '<option value="ipv6"' + (network === 'ipv6' ? ' selected' : '') + '>IPv6</option>' +
-                    '<option value="all"' + (network === 'all' ? ' selected' : '') + '>全部</option>' +
-                    '</select></div>' +
-                    '<div class="clicd-fw-field"><label>方向</label><select class="clicd-fw-select clicd-fw-edit-field" data-field="direction">' +
-                    '<option value="in"' + (dir === 'in' ? ' selected' : '') + '>入站</option>' +
-                    '<option value="out"' + (dir === 'out' ? ' selected' : '') + '>出站</option>' +
-                    '</select></div>' +
-                    '<div class="clicd-fw-field"><label>协议</label><select class="clicd-fw-select clicd-fw-edit-field" data-field="protocol">' +
-                    '<option value="tcp"' + (proto === 'tcp' ? ' selected' : '') + '>TCP</option>' +
-                    '<option value="udp"' + (proto === 'udp' ? ' selected' : '') + '>UDP</option>' +
-                    '</select></div>' +
-                    '<div class="clicd-fw-field"><label>端口</label><input class="clicd-fw-input clicd-fw-edit-field" data-field="port" type="text" value="' + escapeHtml(rule.port || '') + '"></div>' +
-                    '<div class="clicd-fw-field"><label>来源 IP</label><input class="clicd-fw-input clicd-fw-edit-field" data-field="source_ip" type="text" value="' + escapeHtml(rule.source_ip || '') + '"></div>' +
-                    '<div class="clicd-fw-field"><label>动作</label><select class="clicd-fw-select clicd-fw-edit-field" data-field="action">' +
-                    '<option value="ACCEPT"' + (action === 'ACCEPT' ? ' selected' : '') + '>放行</option>' +
-                    '<option value="DROP"' + (action === 'DROP' ? ' selected' : '') + '>拒绝</option>' +
-                    '</select></div>' +
-                    '<div class="clicd-fw-field"><label>说明</label><input class="clicd-fw-input clicd-fw-edit-field" data-field="description" type="text" value="' + desc + '"></div>' +
-                    '<div class="clicd-fw-actions" style="align-items:end">' +
-                    '<button class="clicd-fw-btn clicd-fw-btn-secondary clicd-fw-btn-sm" type="button" data-clicd-fw-action="update-rule">保存</button>' +
-                    '<button class="clicd-fw-btn clicd-fw-btn-danger clicd-fw-btn-sm" type="button" data-clicd-fw-action="delete-rule">删除</button>' +
-                    '</div>' +
-                    '</div>' +
-                    '</div>';
+                return '<tr data-rule-index="' + idx + '">' +
+                    '<td><label class="clicd-fw-toggle clicd-fw-toggle-sm"><input type="checkbox" class="clicd-fw-rule-enabled" ' + enabledChecked + '><span class="clicd-fw-toggle-slider"></span></label></td>' +
+                    '<td><span class="clicd-fw-rule-network">' + networkLabel(network) + '</span></td>' +
+                    '<td><span class="clicd-fw-rule-direction ' + dirClass + '">' + (dir === 'in' ? '入站' : '出站') + '</span></td>' +
+                    '<td>' + escapeHtml(proto.toUpperCase()) + '</td>' +
+                    '<td>' + port + '</td>' +
+                    '<td>' + srcIp + '</td>' +
+                    '<td><span class="clicd-fw-rule-action ' + actionClass + '">' + (action === 'ACCEPT' ? '放行' : '拒绝') + '</span></td>' +
+                    '<td>' + (desc || '-') + '</td>' +
+                    '<td><div class="clicd-fw-rule-ops">' +
+                    '<button class="clicd-fw-icon-btn" type="button" data-clicd-fw-action="edit-rule" title="编辑" aria-label="编辑">&#9998;</button>' +
+                    '<button class="clicd-fw-icon-btn" type="button" data-clicd-fw-action="delete-rule" title="删除" aria-label="删除">&#9003;</button>' +
+                    '</div></td>' +
+                    '</tr>';
             }).join('');
+
+            rulesContainer.innerHTML = '<table class="clicd-fw-table">' +
+                '<thead><tr>' +
+                '<th style="width:88px">状态</th>' +
+                '<th style="width:120px">网络</th>' +
+                '<th style="width:120px">方向</th>' +
+                '<th style="width:110px">协议</th>' +
+                '<th style="width:110px">端口</th>' +
+                '<th>来源/目标 IP</th>' +
+                '<th style="width:120px">动作</th>' +
+                '<th>描述</th>' +
+                '<th style="width:110px;text-align:right">操作</th>' +
+                '</tr></thead><tbody>' + rows + '</tbody></table>';
 
             rulesContainer.querySelectorAll('.clicd-fw-rule-enabled').forEach(function (toggle, idx) {
                 toggle.addEventListener('change', function () {
                     var rule = currentRules[idx];
                     if (!rule) return;
                     rule.enabled = toggle.checked;
-                    saveFirewall();
+                    markDirty('规则开关已修改，点击保存设置后生效');
                 });
             });
         }
 
-        function getEditField(item, name) {
-            return item.querySelector('[data-field="' + name + '"]');
+        function setRuleField(id, value) {
+            var field = document.getElementById(id);
+            if (field) {
+                field.value = value == null ? '' : value;
+            }
         }
 
-        function updateRuleFromFields(item, idx) {
-            currentRules[idx].network = getEditField(item, 'network') ? getEditField(item, 'network').value : 'ipv4';
-            currentRules[idx].direction = getEditField(item, 'direction') ? getEditField(item, 'direction').value : 'in';
-            currentRules[idx].protocol = getEditField(item, 'protocol') ? getEditField(item, 'protocol').value : 'tcp';
-            currentRules[idx].port = getEditField(item, 'port') ? getEditField(item, 'port').value : '';
-            currentRules[idx].source_ip = getEditField(item, 'source_ip') ? getEditField(item, 'source_ip').value : '';
-            currentRules[idx].action = getEditField(item, 'action') ? getEditField(item, 'action').value : 'ACCEPT';
-            currentRules[idx].description = getEditField(item, 'description') ? getEditField(item, 'description').value : '';
+        function getRuleField(id, fallback) {
+            var field = document.getElementById(id);
+            if (!field) return fallback || '';
+            return field.value;
         }
 
-        function getAddRulePayload() {
+        function getRuleFormPayload(baseRule) {
+            var base = baseRule || {};
             return {
-                id: '',
-                network: document.getElementById('clicd-fw-add-network').value,
-                direction: document.getElementById('clicd-fw-add-direction').value,
-                protocol: document.getElementById('clicd-fw-add-protocol').value,
-                port: document.getElementById('clicd-fw-add-port').value,
-                source_ip: document.getElementById('clicd-fw-add-source-ip').value,
-                action: document.getElementById('clicd-fw-add-action').value,
-                description: document.getElementById('clicd-fw-add-desc').value,
-                enabled: true
+                id: base.id || '',
+                network: getRuleField('clicd-fw-add-network', 'ipv4'),
+                direction: getRuleField('clicd-fw-add-direction', 'in'),
+                protocol: getRuleField('clicd-fw-add-protocol', 'tcp'),
+                port: getRuleField('clicd-fw-add-port', ''),
+                source_ip: getRuleField('clicd-fw-add-source-ip', ''),
+                action: getRuleField('clicd-fw-add-action', 'DROP'),
+                description: getRuleField('clicd-fw-add-desc', ''),
+                enabled: baseRule ? base.enabled !== false : true
             };
         }
 
         function clearAddForm() {
-            document.getElementById('clicd-fw-add-network').value = 'ipv4';
-            document.getElementById('clicd-fw-add-port').value = '';
-            document.getElementById('clicd-fw-add-source-ip').value = '';
-            document.getElementById('clicd-fw-add-action').value = 'ACCEPT';
-            document.getElementById('clicd-fw-add-desc').value = '';
+            setRuleField('clicd-fw-add-network', 'ipv4');
+            setRuleField('clicd-fw-add-direction', 'in');
+            setRuleField('clicd-fw-add-protocol', 'tcp');
+            setRuleField('clicd-fw-add-port', '');
+            setRuleField('clicd-fw-add-source-ip', '');
+            setRuleField('clicd-fw-add-action', 'DROP');
+            setRuleField('clicd-fw-add-desc', '');
         }
 
-        // ── FIX: 发 JSON body，走 firewallajax 路由 ──
+        function fillRuleForm(rule) {
+            var item = rule || {};
+            setRuleField('clicd-fw-add-network', item.network || 'ipv4');
+            setRuleField('clicd-fw-add-direction', item.direction || 'in');
+            setRuleField('clicd-fw-add-protocol', item.protocol || 'tcp');
+            setRuleField('clicd-fw-add-port', item.port || '');
+            setRuleField('clicd-fw-add-source-ip', item.source_ip || '');
+            setRuleField('clicd-fw-add-action', item.action || 'DROP');
+            setRuleField('clicd-fw-add-desc', item.description || '');
+        }
+
         function saveFirewall() {
             var enabled = enabledCheckbox.checked;
             var defaultAction = defaultActionSelect.value;
@@ -661,22 +875,22 @@
                 };
             });
 
+            var body = new URLSearchParams();
+            body.set('id', serviceId());
+            body.set('func', 'firewallUpdate');
+            body.set('enabled', enabled ? 'true' : 'false');
+            body.set('default_action', defaultAction);
+            body.set('rules', JSON.stringify(rules));
+
             setBusy(true);
             fetch(endpoint(), {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json; charset=UTF-8',
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                     'Authorization': 'JWT {$Think.get.jwt}'
                 },
                 credentials: 'same-origin',
-                body: JSON.stringify({
-                    id: serviceId(),
-                    func: 'firewallajax',
-                    action: 'update',
-                    enabled: enabled,
-                    default_action: defaultAction,
-                    rules: rules
-                })
+                body: body.toString()
             })
                 .then(function (res) { return res.text(); })
                 .then(function (text) {
@@ -685,10 +899,17 @@
                     showDebug((data.data && data.data.debug) || data.debug || data);
                     if (data.status === 200 || data.status === 'success') {
                         showMessage('success', data.msg || '防火墙设置已更新');
+                        if (data.data && Object.prototype.hasOwnProperty.call(data.data, 'enabled')) {
+                            enabledCheckbox.checked = data.data.enabled === true || data.data.enabled === 'true' || data.data.enabled === 1;
+                        }
+                        if (data.data && data.data.default_action && defaultActionSelect) {
+                            defaultActionSelect.value = data.data.default_action;
+                        }
                         if (data.data && Array.isArray(data.data.rules)) {
                             currentRules = data.data.rules;
                             renderRules(currentRules);
                         }
+                        clearDirty();
                         updateStatusText();
                     } else {
                         showMessage('error', data.msg || '更新失败');
@@ -703,21 +924,20 @@
                 });
         }
 
-        // ── FIX: 发 JSON body，走 firewallajax 路由 ──
         function loadFirewall() {
+            var body = new URLSearchParams();
+            body.set('id', serviceId());
+            body.set('func', 'firewallList');
+
             setBusy(true);
             fetch(endpoint(), {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json; charset=UTF-8',
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                     'Authorization': 'JWT {$Think.get.jwt}'
                 },
                 credentials: 'same-origin',
-                body: JSON.stringify({
-                    id: serviceId(),
-                    func: 'firewallajax',
-                    action: 'list'
-                })
+                body: body.toString()
             })
                 .then(function (res) { return res.text(); })
                 .then(function (text) {
@@ -732,6 +952,7 @@
                             }
                             currentRules = Array.isArray(data.data.rules) ? data.data.rules : [];
                             renderRules(currentRules);
+                            clearDirty();
                             updateStatusText();
                         }
                     } else {
@@ -751,9 +972,9 @@
 
         function updateStatusText() {
             if (enabledCheckbox.checked) {
-                statusText.textContent = '已启用 - 默认' + (defaultActionSelect.value === 'DROP' ? '拒绝' : '放行') + '未匹配流量';
+                statusText.textContent = '已启用，未匹配规则的流量将被' + (defaultActionSelect.value === 'DROP' ? '拒绝' : '放行');
             } else {
-                statusText.textContent = '已禁用 - 所有流量不受限制';
+                statusText.textContent = '未启用时不接管该容器流量';
             }
         }
 
@@ -774,27 +995,51 @@
             }
         }
 
+        function openRuleModal(mode, idx) {
+            ruleModalMode = mode === 'edit' ? 'edit' : 'add';
+            editingRuleIndex = ruleModalMode === 'edit' ? idx : null;
+            if (ruleModalTitle) {
+                ruleModalTitle.textContent = ruleModalMode === 'edit' ? '编辑规则' : '添加规则';
+            }
+            if (ruleModalMode === 'edit' && currentRules[idx]) {
+                fillRuleForm(currentRules[idx]);
+            } else {
+                clearAddForm();
+            }
+            if (addModal) {
+                addModal.style.display = 'flex';
+            }
+            var portInput = document.getElementById('clicd-fw-add-port');
+            if (portInput) {
+                setTimeout(function () { portInput.focus(); }, 0);
+            }
+        }
+
+        function closeAddModal() {
+            ruleModalMode = 'add';
+            editingRuleIndex = null;
+            if (addModal) {
+                addModal.style.display = 'none';
+            }
+        }
+
         panel.addEventListener('click', function (event) {
             var button = event.target.closest('[data-clicd-fw-action]');
             if (!button) return;
             var action = button.getAttribute('data-clicd-fw-action');
 
-            if (action === 'add-rule') {
-                currentRules.push(getAddRulePayload());
-                renderRules(currentRules);
-                clearAddForm();
-                saveFirewall();
+            if (action === 'open-add-rule') {
+                openRuleModal('add');
                 return;
             }
 
-            var item = button.closest('.clicd-fw-rule');
+            var item = button.closest('[data-rule-index]');
             if (!item) return;
             var idx = parseInt(item.getAttribute('data-rule-index'), 10);
             if (isNaN(idx) || !currentRules[idx]) return;
 
-            if (action === 'update-rule') {
-                updateRuleFromFields(item, idx);
-                saveFirewall();
+            if (action === 'edit-rule') {
+                openRuleModal('edit', idx);
                 return;
             }
 
@@ -807,13 +1052,45 @@
 
         enabledCheckbox.addEventListener('change', function () {
             updateStatusText();
-            saveFirewall();
+            markDirty('防火墙开关已修改，点击保存设置后生效');
         });
 
         defaultActionSelect.addEventListener('change', function () {
             updateStatusText();
-            saveFirewall();
+            markDirty('默认动作已修改，点击保存设置后生效');
         });
+
+        if (saveSettingsButton) {
+            saveSettingsButton.addEventListener('click', saveFirewall);
+        }
+
+        if (addClose) {
+            addClose.addEventListener('click', closeAddModal);
+        }
+        if (addCancel) {
+            addCancel.addEventListener('click', closeAddModal);
+        }
+        if (addModal) {
+            addModal.addEventListener('click', function (event) {
+                if (event.target === addModal) closeAddModal();
+            });
+        }
+        if (addConfirm) {
+            addConfirm.addEventListener('click', function () {
+                if (ruleModalMode === 'edit' && editingRuleIndex !== null && currentRules[editingRuleIndex]) {
+                    currentRules[editingRuleIndex] = getRuleFormPayload(currentRules[editingRuleIndex]);
+                    renderRules(currentRules);
+                    closeAddModal();
+                    markDirty('规则已更新，点击保存设置后生效');
+                    return;
+                }
+                currentRules.push(getRuleFormPayload(null));
+                renderRules(currentRules);
+                closeAddModal();
+                clearAddForm();
+                markDirty('规则已添加，点击保存设置后生效');
+            });
+        }
 
         if (deleteCancel) {
             deleteCancel.addEventListener('click', closeDeleteModal);
@@ -831,11 +1108,12 @@
                 if (idx >= 0 && idx < currentRules.length) {
                     currentRules.splice(idx, 1);
                     renderRules(currentRules);
-                    saveFirewall();
+                    markDirty('规则已删除，点击保存设置后生效');
                 }
             });
         }
 
+        updateSaveState();
         loadFirewall();
     })();
 </script>
