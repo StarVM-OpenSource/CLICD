@@ -761,7 +761,8 @@
             var rows = currentRules.map(function (rule, idx) {
                 var dir = (rule.direction || 'in').toLowerCase();
                 var proto = (rule.protocol || 'tcp').toLowerCase();
-                var action = (rule.action || 'ACCEPT').toUpperCase();
+                var rawAction = (rule.action || 'ACCEPT').toUpperCase();
+                var action = rawAction === 'ACCEPT' ? 'ACCEPT' : 'DROP';
                 var network = (rule.network || 'ipv4').toLowerCase();
                 var port = escapeHtml(portDisplay(rule.port));
                 var srcIp = escapeHtml(sourceIpDisplay(rule.source_ip));
