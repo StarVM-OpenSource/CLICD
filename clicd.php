@@ -40,7 +40,7 @@ function clicd_MetaData()
         'DisplayName' => 'CLICD 对接模块 by 欢-Huan and ChatGPT 5.5 and DeepSeek V4',
         'APIVersion'  => '1.1',
         'HelpDoc'     => 'https://github.com/MengMengCode/CLICD',
-        'version'     => '1.0.10',
+        'version'     => '1.0.11',
     ];
 }
 
@@ -365,7 +365,10 @@ function clicd_webssh_url($params, $ticket, $containerName)
     $host = parse_url($baseUrl, PHP_URL_HOST);
     $port = parse_url($baseUrl, PHP_URL_PORT);
     $wsBase = $scheme . '://' . $host . ($port ? ':' . $port : '');
-    $wsUrl = $wsBase . '/api/ssh?container=' . rawurlencode((string)$containerName);
+    $wsUrl = $wsBase
+        . '/api/ssh?container=' . rawurlencode((string)$containerName)
+        . '&container_name=' . rawurlencode((string)$containerName)
+        . '&ticket=' . rawurlencode((string)$ticket);
 
     $siteScheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
     $siteHost = $_SERVER['HTTP_HOST'] ?? '';
@@ -374,6 +377,7 @@ function clicd_webssh_url($params, $ticket, $containerName)
     return $handler
         . '?ws=' . rawurlencode($wsUrl)
         . '&protocol=' . rawurlencode('clicd-ticket.' . (string)$ticket)
+        . '&ticket=' . rawurlencode((string)$ticket)
         . '&container=' . rawurlencode((string)$containerName);
 }
 
@@ -1419,7 +1423,13 @@ function clicd_ClientButton($params)
 
 function clicd_webssh($params)
 {
+    $container = [];
     $containerName = clicd_container_name($params);
+    clicd_container_api_id($params, $container);
+    if (!empty($container['name'])) {
+        $containerName = (string)$container['name'];
+    }
+
     $res = clicd_request($params, '/api/v1/ssh-ticket', ['container_name' => $containerName], 'POST', 30);
     if (!clicd_success($res)) {
         return ['status' => 'error', 'msg' => clicd_message($res, 'WebSSH ticket create failed')];

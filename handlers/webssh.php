@@ -2,8 +2,13 @@
 $ws = isset($_GET['ws']) ? (string)$_GET['ws'] : (isset($_GET['amp;ws']) ? (string)$_GET['amp;ws'] : '');
 $protocol = isset($_GET['protocol']) ? (string)$_GET['protocol'] : (isset($_GET['amp;protocol']) ? (string)$_GET['amp;protocol'] : '');
 $container = isset($_GET['container']) ? (string)$_GET['container'] : (isset($_GET['amp;container']) ? (string)$_GET['amp;container'] : '');
+$ticket = isset($_GET['ticket']) ? (string)$_GET['ticket'] : (isset($_GET['amp;ticket']) ? (string)$_GET['amp;ticket'] : '');
 
-if ($ws === '' || $protocol === '') {
+if ($protocol === '' && $ticket !== '') {
+    $protocol = 'clicd-ticket.' . $ticket;
+}
+
+if ($ws === '') {
     http_response_code(400);
     header('Content-Type: text/plain; charset=utf-8');
     echo "Missing WebSSH parameters\n";
@@ -64,6 +69,7 @@ if ($ws === '' || $protocol === '') {
 (function(){
     var wsUrl = <?php echo json_encode($ws, JSON_UNESCAPED_SLASHES); ?>;
     var protocol = <?php echo json_encode($protocol, JSON_UNESCAPED_SLASHES); ?>;
+    var ticket = <?php echo json_encode($ticket, JSON_UNESCAPED_SLASHES); ?>;
     var term = document.getElementById('term');
     var state = document.getElementById('state');
     var modeSelect = document.getElementById('send-mode');
@@ -189,8 +195,17 @@ if ($ws === '' || $protocol === '') {
         iostat.textContent = 'S' + sentCount + ' R' + recvCount + ' ' + stateText;
     }
 
+    function websocketProtocolValue(value) {
+        value = String(value || '');
+        return /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/.test(value) ? value : '';
+    }
+
     try {
-        socket = new WebSocket(wsUrl, protocol);
+        var protocolValue = websocketProtocolValue(protocol);
+        if (!protocolValue && ticket) {
+            append('[WebSSH] 票据已通过 URL 参数传递，当前浏览器不会发送子协议。\n');
+        }
+        socket = protocolValue ? new WebSocket(wsUrl, protocolValue) : new WebSocket(wsUrl);
         socket.binaryType = 'arraybuffer';
     } catch (e) {
         setState('err', '\nWebSocket 创建失败：' + e.message + '\n');
